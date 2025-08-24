@@ -1,12 +1,16 @@
-# React + Vite
+# Skintizen
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Skintizen** adalah aplikasi frontend penjualan khusus produk **Skintific** yang menampilkan berbagai skincare dan makeup.  
+Pengguna dapat melakukan **login/register**, menambahkan produk ke **keranjang**, serta membuat **pesanan**.
 
-Currently, two official plugins are available:
+## Features
+- **Authentication**: Login/Register untuk pengguna
+- **Product Listing**: Menampilkan produk skincare & makeup dari Skintific
+- **Add to Cart**: Menambahkan produk ke keranjang
+- **Checkout**: Membuat pesanan
+- **Responsive Design**: Tampilan yang mendukung berbagai device
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+- [React + Vite](https://vitejs.dev/) → Frontend framework
+- [Tailwind CSS](https://tailwindcss.com/) → Styling UI
+- [pnpm](https://pnpm.io/) → Package manager
