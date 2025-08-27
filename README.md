@@ -8,6 +8,8 @@ Pengguna dapat melakukan **login/register**, menambahkan produk ke **keranjang**
 - **Product Listing**: Menampilkan produk skincare & makeup dari Skintific
 - **Add to Cart**: Menambahkan produk ke keranjang
 - **Checkout**: Membuat pesanan
+- **Search**: Cari produk
+- **Filter**: Sort produk sesuai jenis
 - **Responsive Design**: Tampilan yang mendukung berbagai device
 
 ## Tech Stack
