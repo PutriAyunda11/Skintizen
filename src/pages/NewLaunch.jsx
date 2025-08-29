@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import Pagination from "../components/Pagination";
 import ProductCard from "../components/ProductCard";
+import Pagination from "../components/Pagination";
 
-export default function BestSeller() {
-  const [bestSellers, setBestSellers] = useState([]);
+export default function NewLaunch() {
+  const [newLaunch, setNewLaunch] = useState([]);
   const [cartItems, setCartItems] = useState({});
   const itemsPerPage = 9;
 
@@ -11,8 +11,8 @@ export default function BestSeller() {
     const storedData = localStorage.getItem("skintiz");
     if (storedData) {
       const products = JSON.parse(storedData);
-      const filtered = products.filter((p) => p.jumlah_terjual >= 80000);
-      setBestSellers(filtered);
+      const filtered = products.filter((p) => p.tahun_keluar >= 2023);
+      setNewLaunch(filtered);
     }
   }, []);
 
@@ -36,12 +36,12 @@ export default function BestSeller() {
   };
 
   return (
-    <div className="max-w-7/8 mx-auto p-2 sm:pb-12 sm:pt-7 lg:p-6 mt-12 sm:mt-25">
+    <div className="max-w-screen lg:max-w-7/8 mx-auto p-2 sm:pb-12 sm:pt-7 lg:p-6 mt-12 sm:mt-25">
       <h1 className="text-xl md:text-2xl font-bold text-center m-6 text-blue-600">
-        Best Seller
+        New Launching
       </h1>
 
-        <Pagination itemsPerPage={itemsPerPage} products={bestSellers}>
+        <Pagination itemsPerPage={itemsPerPage} products={newLaunch}>
           {(currentItems) => (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
               {currentItems.map((item) => {

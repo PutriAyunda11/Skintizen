@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Eye } from "lucide-react";
+import DetailProduct from "../components/DetailProduct";
 
 const randomIds = [44, 18, 14, 28, 33];
 
@@ -88,6 +89,14 @@ export default function Home() {
     const filtered = stored.filter((item) => randomIds.includes(item.id));
     setProductSkin(filtered);
   }, []);
+
+  const [openDetail, setOpenDetail] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const handleOpenDetail = (product) => {
+    setSelectedProduct(product);
+    setOpenDetail(true);
+  };
   return (
     <>
       <div className="relative w-full h-screen">
@@ -103,15 +112,17 @@ export default function Home() {
         </video>
         <div className="absolute inset-0 flex items-end justify-center pb-16">
           <Link
-            to="/best-sellers"
-            className="bg-blue-500 text-white px-3 py-2 rounded-2xl text-lg font-semibold hover:bg-blue-300 transition"
+            to="/all-product"
+            className="bg-blue-500 text-white px-3 py-2 rounded-2xl text-sm sm:text-lg font-semibold hover:bg-blue-300 transition"
           >
             Belanja Sekarang
           </Link>
         </div>
       </div>
 
-      <h1 className="text-3xl font-bold p-7 text-center">Best Sellers</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mt-8 text-center">
+        Best Sellers
+      </h1>
 
       {/* Mobile (HP)*/}
       <div className="flex sm:hidden gap-4 overflow-x-auto scrollbar-hide">
@@ -181,11 +192,20 @@ export default function Home() {
                 <button
                   className="mt-auto w-full px-3 py-1.5 text-sm bg-blue-500 text-white rounded-lg 
              hover:bg-blue-400 transition flex items-center justify-center gap-2"
-                  onClick={() => alert(`Quick View: ${product.nama}`)}
+                  onClick={() => handleOpenDetail(product)}
                 >
                   <Eye size={16} />
                   Lihat Detail
                 </button>
+                                <DetailProduct
+                  isOpen={openDetail}
+                  onClose={() => setOpenDetail(false)}
+                  product={bestSellers}
+                  addToCart={(p, size, shade) =>
+                    console.log("Tambah ke keranjang:", p, size, shade)
+                  }
+                />
+
               </div>
             ))}
           </div>
@@ -265,70 +285,73 @@ export default function Home() {
                   className="mt-2 px-4 py-1.5 text-sm bg-blue-500 text-white rounded-lg 
                        hover:bg-blue-400 transition flex items-center justify-center gap-2 
                        w-fit mx-auto mb-2"
-                  onClick={() => alert(`Quick View: ${product.nama}`)}
+                  onClick={() => handleOpenDetail(product)}
                 >
                   <Eye size={16} />
                   Lihat Detail
                 </button>
+                <DetailProduct
+                  isOpen={openDetail}
+                  onClose={() => setOpenDetail(false)}
+                  product={selectedProduct}
+                  addToCart={(p, size, shade) =>
+                    console.log("Tambah ke keranjang:", p, size, shade)
+                  }
+                />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-<div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-16 mt-15">
-  {/* Gambar */}
-  <div className="relative w-full lg:w-1/1 lg:pr-2">
-    <img
-      src="/photo/setBiru.jpg"
-      alt="Repair Barrier Set Blue"
-      className="w-full h-auto object-cover rounded-lg"
-    />
+      <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-16 mt-15">
+        <div className="relative w-full lg:w-1/1 lg:pr-2">
+          <img
+            src="/photo/setBiru.jpg"
+            alt="Repair Barrier Set Blue"
+            className="w-full h-auto object-cover rounded-lg"
+          />
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white bg-black/40 p-4 lg:hidden">
+            <h2 className="text-xl font-bold">REPAIR BARIER SET BLUE</h2>
+            <p className="text-40px mt-1 font-semibold">
+              Menenangkan Kulit Sensitive
+            </p>
+            <p className="text-40px font-semibold">Meredakan Kemerahan</p>
+          </div>
+        </div>
 
-    {/* Teks overlay untuk tablet & HP */}
-    <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white bg-black/40 p-4 lg:hidden">
-      <h2 className="text-xl font-bold">REPAIR BARIER SET BLUE</h2>
-      <p className="text-40px mt-1 font-semibold">Menenangkan Kulit Sensitive</p>
-      <p className="text-40px font-semibold">Meredakan Kemerahan</p>
-    </div>
-  </div>
+        <div className="hidden lg:flex lg:flex-col lg:w-1/2 lg:justify-center lg:pl-20">
+          <div className="flex flex-col justify-center h-full">
+            <h2 className="text-2xl font-bold mb-4">REPAIR BARIER SET BLUE</h2>
+            <p className="text-base mb-2 ">Menenangkan Kulit Sensitive</p>
+            <p className="text-base">Meredakan Kemerahan</p>
+          </div>
+        </div>
+      </div>
 
-  {/* Teks untuk desktop */}
-  <div className="hidden lg:flex lg:flex-col lg:w-1/2 lg:justify-center lg:pl-20">
-    <div className="flex flex-col justify-center h-full">
-      <h2 className="text-2xl font-bold mb-4">REPAIR BARIER SET BLUE</h2>
-      <p className="text-base mb-2 ">Menenangkan Kulit Sensitive</p>
-      <p className="text-base">Meredakan Kemerahan</p>
-    </div>
-  </div>
-</div>
-
-<div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row-reverse gap-6 lg:gap-16 mt-5 lg:mt-15">
-  {/* Gambar */}
-  <div className="relative w-full lg:w-1/2 lg:pl-2">
-    <img
-      src="/photo/setPink.jpg"
-      alt="GLOWING SET PINK"
-      className="w-full h-auto object-cover rounded-lg"
-    />
-
-    {/* Teks overlay untuk tablet & HP */}
-    <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white bg-black/40 p-4 lg:hidden">
-      <h2 className="text-xl font-bold">GLOWING SET PINK</h2>
-      <p className="text-40px mt-1 font-semibold">Kulit Bersih dan Segar Terhidrasi</p>
-      <p className="text-40px font-semibold">Mencerahkan Warna Kulit</p>
-    </div>
-  </div>
-
-  {/* Teks untuk desktop */}
-  <div className="hidden lg:flex lg:flex-col lg:w-1/2 lg:justify-center lg:pr-20">
-    <div className="flex flex-col justify-center h-full">
-      <h2 className="text-2xl font-bold mb-4">GLOWING SET PINK</h2>
-      <p className="text-base mb-2">Kulit Bersih dan Segar Terhidrasi</p>
-      <p className="text-base">Mencerahkan Warna Kulit</p>
-    </div>
-  </div>
-</div>
+      <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row-reverse gap-6 lg:gap-16 mt-5 lg:mt-15">
+        <div className="relative w-full lg:w-1/2 lg:pl-2">
+          <img
+            src="/photo/setPink.jpg"
+            alt="GLOWING SET PINK"
+            className="w-full h-auto object-cover rounded-lg"
+          />
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white bg-black/40 p-4 lg:hidden">
+            <h2 className="text-xl font-bold">GLOWING SET PINK</h2>
+            <p className="text-40px mt-1 font-semibold">
+              Kulit Bersih dan Segar Terhidrasi
+            </p>
+            <p className="text-40px font-semibold">Mencerahkan Warna Kulit</p>
+          </div>
+        </div>
+        <div className="hidden lg:flex lg:flex-col lg:w-1/2 lg:justify-center lg:pr-20">
+          <div className="flex flex-col justify-center h-full">
+            <h2 className="text-2xl font-bold mb-4">GLOWING SET PINK</h2>
+            <p className="text-base mb-2">Kulit Bersih dan Segar Terhidrasi</p>
+            <p className="text-base">Mencerahkan Warna Kulit</p>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

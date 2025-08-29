@@ -4,9 +4,18 @@ import { createRoot } from 'react-dom/client';
 import App from "./App.jsx";
 import "@fontsource/raleway";
 import { createBrowserRouter } from 'react-router-dom';
-import Home from "./pages/Home.jsx";
 import { StrictMode } from 'react';
 import { RouterProvider } from 'react-router-dom';
+import Home from "./pages/Home.jsx";
+import BestSeller from "./pages/BestSeller.jsx";
+import NewLaunch from './pages/NewLaunch.jsx';
+import Skincare from './pages/Skincare.jsx';
+import MakeUp from './pages/MakeUp.jsx';
+import Register from './pages/Register.jsx';
+import Login from './pages/Login.jsx';
+import Search from './pages/Search.jsx';
+import AllProduct from './pages/AllProduct.jsx';
+import Pesanan from './pages/Pesanan.jsx';
 
 
 const router = createBrowserRouter(
@@ -21,24 +30,44 @@ const router = createBrowserRouter(
         element: <Home/>
       },
       {
+        path:"/login",
+        element: <Login/>
+      },
+      {
         path:"/best-sellers",
-        element: <Home/>
+        element: <BestSeller/>
       },
       {
         path:"/new-launch",
-        element: <Home/>
-      },
-      {
-        path:"/makeup",
-        element: <Home/>
+        element: <NewLaunch/>
       },
       {
         path:"/skin-care",
-        element: <Home/>
+        element: <Skincare/>
       },
       {
-        path:"/about",
-        element: <Home/>
+        path:"/makeup",
+        element: <MakeUp/>
+      },
+      // {
+      //   path:"/about",
+      //   element: <Home/>
+      // },
+      {
+        path:"/register",
+        element: <Register/>
+      },
+      {
+        path:"/search",
+        element: <Search/>
+      },
+      {
+        path:"/all-product",
+        element: <AllProduct/>
+      },
+      {
+        path:"/pesanan",
+        element: <Pesanan/>
       },
     ]
   }

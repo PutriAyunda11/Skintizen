@@ -240,7 +240,7 @@
         "id": 19,
         "nama": "Cover All Perfect Cushion",
         "jenis_produk": "Makeup Cushion",
-        "foto": "/photo/cushion.jpg",
+        "foto": "/photo/cushion1.jpg",
         "deskripsi": "Cushion dengan hasil flawless dewy finish, mengandung skincare ingredients seperti niacinamide dan centella, serta dilengkapi SPF 50+ PA++++ untuk perlindungan maksimal.",
         "harga": 189000,
         "stok": 800,
@@ -366,7 +366,7 @@
     {
         "id": 29,
         "nama": "Skintific Invisible Loose Setting Powder",
-        "jenis_produk": "Makeup",
+        "jenis_produk": "Makeup Loose Powder",
         "foto": "/photo/looseP.jpg",
         "deskripsi": "Loose powder ringan dengan teknologi micro-blurring yang membantu mengontrol minyak, menyamarkan pori, dan memberikan hasil akhir matte yang natural tanpa cakey.",
         "harga": 139000,
@@ -526,7 +526,7 @@
     {
         "id": 42,
         "nama": "Skintific Lock the Look Setting Spray",
-        "jenis_produk": "Makeup Setting",
+        "jenis_produk": "Makeup Setting Spray",
         "foto": "/photo/setting.jpg",
         "deskripsi": "Spray ringan yang membantu menahan makeup lebih lama, mengontrol kilap, dan memberikan efek segar serta lembap pada kulit sepanjang hari.",
         "harga": 99000,
@@ -670,7 +670,7 @@
     {
         "id": 54,
         "nama": "Daily Filter Perfect 3-in-1 SkinTint",
-        "jenis_produk": "MakeUp",
+        "jenis_produk": "Makeup skintint",
         "foto": "/photo/skintint.jpg",
         "deskripsi": "Daily Filter Perfect 3-in-1 SkinTint dari Skintific menggabungkan fungsi primer, foundation, dan moisturizer dalam satu produk. Dengan teknologi berbasis silikon, produk ini memberikan efek blur pada pori-pori dan hasil akhir yang flawless. Cocok untuk penggunaan sehari-hari, memberikan tampilan natural dengan coverage yang buildable. Tersedia dalam berbagai shade untuk menyesuaikan berbagai tone kulit. :contentReference[oaicite:8]{index=8}",
         "harga": 129000,
