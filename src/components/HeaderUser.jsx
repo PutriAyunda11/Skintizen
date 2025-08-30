@@ -15,7 +15,8 @@ export default function HeaderUser() {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("currentUser");
     setShowPopup(false);
-    navigate("/login"); // arahkan ke login
+    navigate("/login", { replace: true });// arahkan ke login
+    navigate(0);
   };
 
   return (

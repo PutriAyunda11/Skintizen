@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import Pagination from "../components/Pagination";
+import { useOutletContext } from "react-router-dom";
+import DetailProduct from "../components/DetailProduct";
 
 export default function Search() {
   const location = useLocation();
@@ -26,11 +28,18 @@ export default function Search() {
     }
   }, [query]);
 
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const { isDetailOpen, setIsDetailOpen } = useOutletContext();
+
+  const handleOpenDetail = (allProduct) => {
+    setSelectedProduct(allProduct);
+    setIsDetailOpen(true);
+  };
+
   return (
     <div className="min-h-screen p-6 bg-gray-50 mt-25">
       <h1 className="text-2xl font-bold m-6 text-center">
-        Hasil pencarian untuk:{" "}
-        <span className="text-pink-600">"{query}"</span>
+        Hasil pencarian untuk: <span className="text-pink-600">"{query}"</span>
       </h1>
 
       {results.length > 0 ? (
@@ -43,6 +52,7 @@ export default function Search() {
                 qty={0}
                 incrementCart={() => {}}
                 decrementCart={() => {}}
+                onOpenDetail={handleOpenDetail}
               />
             ))}
           </div>
@@ -57,6 +67,7 @@ export default function Search() {
                     qty={0}
                     incrementCart={() => {}}
                     decrementCart={() => {}}
+                    onOpenDetail={handleOpenDetail}
                   />
                 ))}
               </div>
@@ -67,6 +78,17 @@ export default function Search() {
         <p className="text-gray-500 text-center">
           Tidak ada produk yang cocok.
         </p>
+      )}
+      {isDetailOpen && (
+        <DetailProduct
+          isOpen={isDetailOpen}
+          onClose={() => setIsDetailOpen(false)}
+          product={selectedProduct}
+          overlayOpacity="bg-black/60"
+          addToCart={(p, size, shade) =>
+            console.log("Tambah ke keranjang:", p, size, shade)
+          }
+        />
       )}
     </div>
   );

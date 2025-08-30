@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Pagination from "../components/Pagination";
 import ProductCard from "../components/ProductCard";
 import Filtered from "../components/Filtered";
+import DetailProduct from "../components/DetailProduct";
+import { useOutletContext } from "react-router-dom";
 
 export default function AllProduct() {
   const [allProduct, setAllProduct] = useState([]);
@@ -37,14 +39,20 @@ export default function AllProduct() {
     });
   };
 
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const { isDetailOpen, setIsDetailOpen } = useOutletContext();
+
+  const handleOpenDetail = (allProduct) => {
+    setSelectedProduct(allProduct);
+    setIsDetailOpen(true);
+  };
+
   return (
     <div className="max-w-full mx-auto flex flex-col lg:flex-row gap-6 p-0 sm:pb-12 sm:pt-7 lg:p-6 mt-12 sm:mt-25">
       <Filtered
         products={allProduct}
         onFilterChange={setFilteredProducts}
         page="/all-product"
-        // isOpen={true} // bisa di-control state kalau mau global
-        // onClose={() => console.log("Filter drawer closed")}
       />
       <div className="max-w-7/8 mx-auto">
         {filteredProducts.length <= itemsPerPage ? (
@@ -58,12 +66,12 @@ export default function AllProduct() {
                   qty={qty}
                   incrementCart={incrementCart}
                   decrementCart={decrementCart}
+                  onOpenDetail={handleOpenDetail}
                 />
               );
             })}
           </div>
         ) : (
-          // ✅ Kalau data lebih banyak dari itemsPerPage → pakai Pagination
           <Pagination itemsPerPage={itemsPerPage} products={filteredProducts}>
             {(currentItems) => (
               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -76,6 +84,7 @@ export default function AllProduct() {
                       qty={qty}
                       incrementCart={incrementCart}
                       decrementCart={decrementCart}
+                      onOpenDetail={handleOpenDetail}
                     />
                   );
                 })}
@@ -84,6 +93,17 @@ export default function AllProduct() {
           </Pagination>
         )}
       </div>
+      {isDetailOpen && (
+        <DetailProduct
+          isOpen={isDetailOpen}
+          onClose={() => setIsDetailOpen(false)}
+          product={selectedProduct}
+          overlayOpacity="bg-black/60"
+          addToCart={(p, size, shade) =>
+            console.log("Tambah ke keranjang:", p, size, shade)
+          }
+        />
+      )}
     </div>
   );
 }

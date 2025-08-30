@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Eye } from "lucide-react";
 import DetailProduct from "../components/DetailProduct";
@@ -40,40 +40,35 @@ export default function Home() {
     }
   }, []);
 
-  const [itemsPerPage, setItemsPerPage] = useState(7);
-  useEffect(() => {
-    const updateItemsPerPage = () => {
-      if (window.innerWidth < 640) {
-        setItemsPerPage(2);
-      } else if (window.innerWidth < 1024) {
-        setItemsPerPage(3);
-      } else if (window.innerWidth < 1300) {
-        setItemsPerPage(5);
-      } else {
-        setItemsPerPage(7);
-      }
-    };
+  const [tabletIndex, setTabletIndex] = useState(0);
+  const [desktopIndex, setDesktopIndex] = useState(0);
+  const desktopPerPage = 7;
+  const tabletPerPage = 3;
 
-    updateItemsPerPage();
-    window.addEventListener("resize", updateItemsPerPage);
-    return () => window.removeEventListener("resize", updateItemsPerPage);
-  }, []);
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const selectedProducts = bestSellers.slice(
-    currentIndex,
-    currentIndex + itemsPerPage
+  const tabletItems = bestSellers.slice(
+    tabletIndex,
+    tabletIndex + tabletPerPage
   );
-
-  const totalPages = Math.max(bestSellers.length - itemsPerPage + 1, 1);
-  const prevSlide = () => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
-  };
-  const nextSlide = () => {
-    setCurrentIndex((prev) =>
-      Math.min(prev + 1, bestSellers.length - itemsPerPage)
+  const desktopItems = bestSellers.slice(
+    desktopIndex,
+    desktopIndex + desktopPerPage
+  );
+  const tabletTotalPages = Math.max(bestSellers.length - tabletPerPage + 1, 1);
+  const desktopTotalPages = Math.max(
+    bestSellers.length - desktopPerPage + 1,
+    1
+  );
+  const prevTablet = () => setTabletIndex((prev) => Math.max(prev - 1, 0));
+  const nextTablet = () =>
+    setTabletIndex((prev) =>
+      Math.min(prev + 1, bestSellers.length - tabletPerPage)
     );
-  };
+
+  const prevDesktop = () => setDesktopIndex((prev) => Math.max(prev - 1, 0));
+  const nextDesktop = () =>
+    setDesktopIndex((prev) =>
+      Math.min(prev + 1, bestSellers.length - desktopPerPage)
+    );
 
   // Data video
   const [productSkin, setProductSkin] = useState([]);
@@ -90,12 +85,12 @@ export default function Home() {
     setProductSkin(filtered);
   }, []);
 
-  const [openDetail, setOpenDetail] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const { isDetailOpen, setIsDetailOpen } = useOutletContext();
 
   const handleOpenDetail = (product) => {
     setSelectedProduct(product);
-    setOpenDetail(true);
+    setIsDetailOpen(true);
   };
   return (
     <>
@@ -144,34 +139,44 @@ export default function Home() {
             <button
               className="mt-auto w-full px-3 py-1.5 text-sm bg-blue-500 text-white rounded-lg 
              hover:bg-blue-400 transition flex items-center justify-center gap-2"
-              onClick={() => alert(`Quick View: ${product.nama}`)}
+              onClick={() => handleOpenDetail(product)}
             >
               <Eye size={16} />
               Lihat Detail
             </button>
+            {isDetailOpen && (
+              <DetailProduct
+                isOpen={isDetailOpen}
+                onClose={() => setIsDetailOpen(false)}
+                product={selectedProduct}
+                overlayOpacity="bg-black/15"
+                addToCart={(p, size, shade) =>
+                  console.log("Tambah ke keranjang:", p, size, shade)
+                }
+              />
+            )}
           </div>
         ))}
       </div>
 
-      {/* Tablet & Desktop*/}
-      <div className="hidden sm:flex flex-col items-center">
+      {/* Desktop (7 items) */}
+      <div className="hidden lg:flex flex-col items-center">
         <div className="flex items-center justify-center">
           <button
-            onClick={prevSlide}
-            disabled={currentIndex === 0}
+            onClick={prevDesktop}
+            disabled={desktopIndex === 0}
             className="p-2 bg-gray-200 rounded-full mr-3 disabled:opacity-50"
           >
             <ChevronLeft
-              className={currentIndex === 0 ? "text-gray-400" : "text-black"}
+              className={desktopIndex === 0 ? "text-gray-400" : "text-black"}
             />
           </button>
 
           <div className="flex gap-6 overflow-hidden">
-            {selectedProducts.map((product) => (
+            {desktopItems.map((product) => (
               <div
                 key={product.id}
-                className="p-4 bg-white shadow rounded-lg flex flex-col items-center 
-          w-44 md:w-43 h-90"
+                className="p-4 bg-white shadow rounded-lg flex flex-col items-center w-44 md:w-43 h-90"
               >
                 <img
                   src={product.foto}
@@ -190,34 +195,34 @@ export default function Home() {
                   </p>
                 </div>
                 <button
-                  className="mt-auto w-full px-3 py-1.5 text-sm bg-blue-500 text-white rounded-lg 
-             hover:bg-blue-400 transition flex items-center justify-center gap-2"
+                  className="mt-auto w-full px-3 py-1.5 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-400 transition flex items-center justify-center gap-2"
                   onClick={() => handleOpenDetail(product)}
                 >
-                  <Eye size={16} />
-                  Lihat Detail
+                  <Eye size={16} /> Lihat Detail
                 </button>
-                                <DetailProduct
-                  isOpen={openDetail}
-                  onClose={() => setOpenDetail(false)}
-                  product={bestSellers}
-                  addToCart={(p, size, shade) =>
-                    console.log("Tambah ke keranjang:", p, size, shade)
-                  }
-                />
-
+                {isDetailOpen && (
+                  <DetailProduct
+                    isOpen={isDetailOpen}
+                    onClose={() => setIsDetailOpen(false)}
+                    product={selectedProduct}
+                    overlayOpacity="bg-black/15"
+                    addToCart={(p, size, shade) =>
+                      console.log("Tambah ke keranjang:", p, size, shade)
+                    }
+                  />
+                )}
               </div>
             ))}
           </div>
 
           <button
-            onClick={nextSlide}
-            disabled={currentIndex >= bestSellers.length - itemsPerPage}
+            onClick={nextDesktop}
+            disabled={desktopIndex >= bestSellers.length - desktopPerPage}
             className="p-2 bg-gray-200 rounded-full ml-3 disabled:opacity-50"
           >
             <ChevronRight
               className={
-                currentIndex >= bestSellers.length - itemsPerPage
+                desktopIndex >= bestSellers.length - desktopPerPage
                   ? "text-gray-400"
                   : "text-black"
               }
@@ -225,13 +230,99 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Pagination*/}
+        {/* Pagination */}
         <div className="flex justify-center mt-4 gap-3">
-          {Array.from({ length: totalPages }).map((_, index) => (
+          {Array.from({ length: desktopTotalPages }).map((_, index) => (
             <span
               key={index}
               className={`w-3 h-3 rounded-full transition-all duration-100 ${
-                index === currentIndex
+                index === desktopIndex
+                  ? "bg-white border border-black/30 scale-125"
+                  : "bg-gray-300"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Tablet (3 items) */}
+      <div className="hidden md:flex lg:hidden flex-col items-center">
+        <div className="flex items-center justify-center">
+          <button
+            onClick={prevTablet}
+            disabled={tabletIndex === 0}
+            className="p-2 bg-gray-200 rounded-full mr-3 disabled:opacity-50"
+          >
+            <ChevronLeft
+              className={tabletIndex === 0 ? "text-gray-400" : "text-black"}
+            />
+          </button>
+
+          <div className="flex gap-6 overflow-hidden">
+            {tabletItems.map((product) => (
+              <div
+                key={product.id}
+                className="p-4 bg-white shadow rounded-lg flex flex-col items-center w-44 md:w-43 h-90"
+              >
+                <img
+                  src={product.foto}
+                  alt={product.nama}
+                  className="w-28 md:w-32 h-28 md:h-32 object-cover mb-3 rounded-lg"
+                />
+                <div className="flex-grow flex flex-col items-center">
+                  <h3 className="text-sm md:text-lg font-semibold text-center line-clamp-2">
+                    {product.nama}
+                  </h3>
+                  <p className="text-gray-800 text-sm md:text-base">
+                    Harga: Rp {product.harga.toLocaleString()}
+                  </p>
+                  <p className="text-gray-800 text-sm md:text-base">
+                    Terjual: {product.jumlah_terjual}
+                  </p>
+                </div>
+                <button
+                  className="mt-auto w-full px-3 py-1.5 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-400 transition flex items-center justify-center gap-2"
+                  onClick={() => handleOpenDetail(product)}
+                >
+                  <Eye size={16} /> Lihat Detail
+                </button>
+                {isDetailOpen && (
+                  <DetailProduct
+                    isOpen={isDetailOpen}
+                    onClose={() => setIsDetailOpen(false)}
+                    product={selectedProduct}
+                    overlayOpacity="bg-black/15"
+                    addToCart={(p, size, shade) =>
+                      console.log("Tambah ke keranjang:", p, size, shade)
+                    }
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={nextTablet}
+            disabled={tabletIndex >= bestSellers.length - tabletPerPage}
+            className="p-2 bg-gray-200 rounded-full ml-3 disabled:opacity-50"
+          >
+            <ChevronRight
+              className={
+                tabletIndex >= bestSellers.length - tabletPerPage
+                  ? "text-gray-400"
+                  : "text-black"
+              }
+            />
+          </button>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-center mt-4 gap-3">
+          {Array.from({ length: tabletTotalPages }).map((_, index) => (
+            <span
+              key={index}
+              className={`w-3 h-3 rounded-full transition-all duration-100 ${
+                index === tabletIndex
                   ? "bg-white border border-black/30 scale-125"
                   : "bg-gray-300"
               }`}
@@ -290,14 +381,17 @@ export default function Home() {
                   <Eye size={16} />
                   Lihat Detail
                 </button>
-                <DetailProduct
-                  isOpen={openDetail}
-                  onClose={() => setOpenDetail(false)}
-                  product={selectedProduct}
-                  addToCart={(p, size, shade) =>
-                    console.log("Tambah ke keranjang:", p, size, shade)
-                  }
-                />
+                {isDetailOpen && (
+                  <DetailProduct
+                    isOpen={isDetailOpen}
+                    onClose={() => setIsDetailOpen(false)}
+                    product={selectedProduct}
+                    overlayOpacity="bg-black/15"
+                    addToCart={(p, size, shade) =>
+                      console.log("Tambah ke keranjang:", p, size, shade)
+                    }
+                  />
+                )}
               </div>
             </div>
           ))}

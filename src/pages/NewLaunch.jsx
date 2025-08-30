@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import Pagination from "../components/Pagination";
+import { useOutletContext } from "react-router-dom";
+import DetailProduct from "../components/DetailProduct";
+
 
 export default function NewLaunch() {
   const [newLaunch, setNewLaunch] = useState([]);
@@ -34,6 +37,14 @@ export default function NewLaunch() {
       return { ...prev, [id]: qty };
     });
   };
+    
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const { isDetailOpen, setIsDetailOpen } = useOutletContext();
+
+  const handleOpenDetail = (allProduct) => {
+    setSelectedProduct(allProduct);
+    setIsDetailOpen(true);
+  };
 
   return (
     <div className="max-w-screen lg:max-w-7/8 mx-auto p-2 sm:pb-12 sm:pt-7 lg:p-6 mt-12 sm:mt-25">
@@ -53,12 +64,24 @@ export default function NewLaunch() {
                     qty={qty}
                     incrementCart={incrementCart}
                     decrementCart={decrementCart}
+                                                        onOpenDetail={handleOpenDetail}
                   />
                 );
               })}
             </div>
           )}
         </Pagination>
+              {isDetailOpen && (
+                <DetailProduct
+                  isOpen={isDetailOpen}
+                  onClose={() => setIsDetailOpen(false)}
+                  product={selectedProduct}
+                  overlayOpacity="bg-black/60"
+                  addToCart={(p, size, shade) =>
+                    console.log("Tambah ke keranjang:", p, size, shade)
+                  }
+                />
+              )}
     </div>
   );
 }

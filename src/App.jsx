@@ -5,14 +5,19 @@ import { useState } from "react";
 
 export default function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+
+  // Jika salah satu modal/drawer terbuka → lock scroll
+  const isAnyOverlayOpen = isSearchOpen || isDetailOpen;
 
   return (
-    <>
-      <div className={isSearchOpen ? "overflow-hidden h-screen" : ""}>
-        <Header isSearchOpen={isSearchOpen} setIsSearchOpen={setIsSearchOpen} />
-        <Outlet />
-        <Footer />
-      </div>{" "}
-    </>
+    <div className={isAnyOverlayOpen ? "overflow-hidden h-screen" : "overflow-auto"}>
+      <Header
+        isSearchOpen={isSearchOpen}
+        setIsSearchOpen={setIsSearchOpen}
+      />
+      <Outlet context={{ isDetailOpen, setIsDetailOpen }} /> 
+      <Footer />
+    </div>
   );
 }

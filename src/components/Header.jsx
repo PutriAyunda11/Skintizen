@@ -15,7 +15,7 @@ export default function Header({ isSearchOpen, setIsSearchOpen }) {
   useEffect(() => {
     const loggedInStatus = localStorage.getItem("isLoggedIn") === "true";
     setIsLoggedIn(loggedInStatus);
-  }, []);
+  }, [location]);
 
   const navItems = [
     { label: "Best Sellers", path: "/best-sellers" },

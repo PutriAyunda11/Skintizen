@@ -16,6 +16,7 @@ import Login from './pages/Login.jsx';
 import Search from './pages/Search.jsx';
 import AllProduct from './pages/AllProduct.jsx';
 import Pesanan from './pages/Pesanan.jsx';
+import Product from './pages/Product.jsx';
 
 
 const router = createBrowserRouter(
@@ -64,6 +65,10 @@ const router = createBrowserRouter(
       {
         path:"/all-product",
         element: <AllProduct/>
+      },
+      {
+        path:"//product/:id",
+        element: <Product/>
       },
       {
         path:"/pesanan",

@@ -14,14 +14,15 @@ export default function Login() {
 
     const storedData = JSON.parse(localStorage.getItem("users")) || [];
 
-const userFound = storedData.find(
-  (user) =>
-    user.email.toLowerCase().trim() === email.toLowerCase().trim() &&
-    user.password === password.trim()
-);
+    const userFound = storedData.find(
+      (user) =>
+        user.email.toLowerCase().trim() === email.toLowerCase().trim() &&
+        user.password === password.trim()
+    );
+
     if (userFound) {
       // Simpan status login dengan nama user
-      localStorage.setItem("isLoggedIn", true);
+      localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("currentUser", JSON.stringify(userFound));
 
       setType("success");
@@ -29,7 +30,11 @@ const userFound = storedData.find(
       setShowPopup(true);
 
       setTimeout(() => {
-        navigate("/pesanan");
+        //Navigasi dengan "replace" + "state" untuk memicu refresh
+        navigate("/pesanan", {
+          replace: true,
+          state: { refresh: Date.now() }, // kunci unik agar App rerender
+        });
       }, 2000);
     } else {
       setType("error");
@@ -39,20 +44,16 @@ const userFound = storedData.find(
   };
 
   return (
-    <div className=" min-h-[90vh] lg:min-h-[70vh] flex flex-col justify-center bg-white px-6 mt-5 lg:mt-25">
+    <div className="min-h-[90vh] lg:min-h-[70vh] flex flex-col justify-center bg-white px-6 mt-5 lg:mt-25">
       <h1 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-8 text-center">
         Bergabung Sekarang
       </h1>
-
-      {/* 🔹 Popup Modal */}
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          {/* background gelap */}
           <div
             className="absolute inset-0 bg-black/40"
             onClick={() => setShowPopup(false)}
           />
-          {/* kotak popup */}
           <div
             className={`relative bg-white rounded-xl shadow-lg p-6 w-80 text-center border-t-4 ${
               type === "error" ? "border-red-500" : "border-green-500"

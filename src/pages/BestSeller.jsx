@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Pagination from "../components/Pagination";
 import ProductCard from "../components/ProductCard";
+import { useOutletContext } from "react-router-dom";
+import DetailProduct from "../components/DetailProduct";
 
 export default function BestSeller() {
   const [bestSellers, setBestSellers] = useState([]);
@@ -35,30 +37,51 @@ export default function BestSeller() {
     });
   };
 
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const { isDetailOpen, setIsDetailOpen } = useOutletContext();
+
+  const handleOpenDetail = (allProduct) => {
+    setSelectedProduct(allProduct);
+    setIsDetailOpen(true);
+  };
+
   return (
     <div className="max-w-7/8 mx-auto p-2 sm:pb-12 sm:pt-7 lg:p-6 mt-12 sm:mt-25">
       <h1 className="text-xl md:text-2xl font-bold text-center m-6 text-blue-600">
         Best Seller
       </h1>
 
-        <Pagination itemsPerPage={itemsPerPage} products={bestSellers}>
-          {(currentItems) => (
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-              {currentItems.map((item) => {
-                const qty = cartItems[item.id] || 0;
-                return (
-                  <ProductCard
-                    key={item.id}
-                    item={item}
-                    qty={qty}
-                    incrementCart={incrementCart}
-                    decrementCart={decrementCart}
-                  />
-                );
-              })}
-            </div>
-          )}
-        </Pagination>
+      <Pagination itemsPerPage={itemsPerPage} products={bestSellers}>
+        {(currentItems) => (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+            {currentItems.map((item) => {
+              const qty = cartItems[item.id] || 0;
+              return (
+                <ProductCard
+                  key={item.id}
+                  item={item}
+                  qty={qty}
+                  incrementCart={incrementCart}
+                  decrementCart={decrementCart}
+                  onOpenDetail={handleOpenDetail}
+                />
+              );
+            })}
+          </div>
+        )}
+      </Pagination>
+
+      {isDetailOpen && (
+        <DetailProduct
+          isOpen={isDetailOpen}
+          onClose={() => setIsDetailOpen(false)}
+          product={selectedProduct}
+          overlayOpacity="bg-black/60"
+          addToCart={(p, size, shade) =>
+            console.log("Tambah ke keranjang:", p, size, shade)
+          }
+        />
+      )}
     </div>
   );
 }

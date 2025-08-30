@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Pagination from "../components/Pagination";
 import ProductCard from "../components/ProductCard";
 import Filtered from "../components/Filtered";
+import { useOutletContext } from "react-router-dom";
+import DetailProduct from "../components/DetailProduct";
 
 export default function Skincare() {
   const [skincare, setSkincare] = useState([]);
@@ -21,7 +23,6 @@ export default function Skincare() {
     }
   }, []);
 
-  // Cart function
   const incrementCart = (id) => {
     setCartItems((prev) => ({
       ...prev,
@@ -39,6 +40,14 @@ export default function Skincare() {
       }
       return { ...prev, [id]: qty };
     });
+  };
+
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const { isDetailOpen, setIsDetailOpen } = useOutletContext();
+
+  const handleOpenDetail = (allProduct) => {
+    setSelectedProduct(allProduct);
+    setIsDetailOpen(true);
   };
 
   return (
@@ -66,6 +75,7 @@ export default function Skincare() {
                     qty={qty}
                     incrementCart={incrementCart}
                     decrementCart={decrementCart}
+                    onOpenDetail={handleOpenDetail}
                   />
                 );
               })}
@@ -84,6 +94,7 @@ export default function Skincare() {
                         qty={qty}
                         incrementCart={incrementCart}
                         decrementCart={decrementCart}
+                        onOpenDetail={handleOpenDetail}
                       />
                     );
                   })}
@@ -92,6 +103,17 @@ export default function Skincare() {
             </Pagination>
           )}
         </div>
+        {isDetailOpen && (
+          <DetailProduct
+            isOpen={isDetailOpen}
+            onClose={() => setIsDetailOpen(false)}
+            product={selectedProduct}
+            overlayOpacity="bg-black/60"
+            addToCart={(p, size, shade) =>
+              console.log("Tambah ke keranjang:", p, size, shade)
+            }
+          />
+        )}
       </div>
     </>
   );

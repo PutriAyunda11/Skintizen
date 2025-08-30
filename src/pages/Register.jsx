@@ -5,9 +5,9 @@ export default function Register() {
   const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState(null); // pesan error/success
-  const [type, setType] = useState("error"); // "error" | "success"
-  const [showPopup, setShowPopup] = useState(false); // kontrol popup
+  const [message, setMessage] = useState(null);
+  const [type, setType] = useState("error");
+  const [showPopup, setShowPopup] = useState(false); 
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {

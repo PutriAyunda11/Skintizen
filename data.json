@@ -361,7 +361,16 @@
         "stok": 600,
         "tahun_keluar": 2022,
         "jumlah_terjual": 60000,
-        "size": "5 ml"
+        "size": "5 ml",
+        "shade":[
+            "Clear",
+            "Baby pink",
+            "Coral Rose",
+            "Pink red",
+            "Pink berry",
+            "Peach rose",
+            "Cherry Red"
+        ]
     },
     {
         "id": 29,

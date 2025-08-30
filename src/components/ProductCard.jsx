@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 const MotionDiv = motion.div;
 const MotionButton = motion.button;
 
-export default function ProductCard({ item, qty, incrementCart, decrementCart }) {
+export default function ProductCard({ item, qty, incrementCart, decrementCart, onOpenDetail }) {
   return (
     <div className="relative border-none rounded-xl p-3 sm:p-4 shadow-sm bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
       
@@ -54,12 +54,12 @@ export default function ProductCard({ item, qty, incrementCart, decrementCart })
 
       {/* Action Buttons */}
       <div className="flex gap-1 sm:gap-2 mt-auto">
-        {/* Tombol "Lihat Detail" tetap selalu muncul */}
         {qty === 0 && (
           <MotionButton
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
+            onClick={() => onOpenDetail(item)}
             className="flex-1 bg-blue-500 text-white font-semibold py-1 sm:py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center gap-1 sm:gap-2 text-[9px] sm:text-sm"
           >
             <Eye size={14} />
@@ -67,7 +67,7 @@ export default function ProductCard({ item, qty, incrementCart, decrementCart })
           </MotionButton>
         )}
 
-        {/* 🔹 Tampilkan keranjang hanya jika produk TIDAK punya shade */}
+        {/* Tampilkan keranjang hanya jika produk TIDAK punya shade */}
         {!item.shade && (
           <>
             {qty === 0 ? (

@@ -82,10 +82,13 @@ export default function DrawerSearch({ isOpen, onClose }) {
                 <>
                   <ul className="space-y-2 flex-1 sm:hidden">
                     {results.map((item) => (
-                      <li
+                      <Link
+                        to={`/product/${item.id}`}
                         key={item.id}
-                        className="flex items-center gap-3 p-2 border rounded hover:bg-gray-100 cursor-pointer"
+                        onClick={onClose}
+                        className="flex items-center gap-3 p-2 border rounded hover:bg-gray-100 cursor-pointer group relative"
                       >
+                        {" "}
                         <img
                           src={item.foto || "/placeholder.png"}
                           alt={item.nama}
@@ -100,33 +103,39 @@ export default function DrawerSearch({ isOpen, onClose }) {
                             Rp {item.harga?.toLocaleString("id-ID") || "-"}
                           </div>
                         </div>
-                      </li>
+                        <ArrowRight className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition" />
+                      </Link>
                     ))}
                   </ul>
-
                   {/* Desktop */}
                   <div className="hidden sm:flex flex-col flex-1">
-                    <ul className="space-y-2 flex-1">
+                    <ul className="space-y-5 flex-1">
                       {results.slice(0, 5).map((item) => (
-                        <li
+                        <Link
+                          to={`/product/${item.id}`}
                           key={item.id}
-                          className="flex items-center gap-3 p-2 border rounded hover:bg-gray-100 cursor-pointer"
+                          onClick={onClose}
+                          className="flex items-center gap-3 p-2 border rounded hover:bg-gray-100 cursor-pointer group relative"
                         >
+                          {" "}
                           <img
                             src={item.foto || "/placeholder.png"}
                             alt={item.nama}
-                            className="w-16 h-16 object-cover rounded-md border"
+                            className="w-25 h-25 object-cover rounded-md border"
                           />
                           <div className="flex flex-col">
-                            <div className="font-medium">{item.nama}</div>
-                            <div className="text-gray-500 text-xs">
+                            <div className="font-medium text-[20px]">
+                              {item.nama}
+                            </div>
+                            <div className="text-gray-500">
                               {item.jenis_produk}
                             </div>
-                            <div className="text-pink-600 font-semibold">
+                            <div className="text-pink-600 font-semibold text-[17px]">
                               Rp {item.harga?.toLocaleString("id-ID") || "-"}
                             </div>
                           </div>
-                        </li>
+                          <ArrowRight className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition" />
+                        </Link>
                       ))}
                     </ul>
                     {results.length > 0 && (
@@ -135,7 +144,7 @@ export default function DrawerSearch({ isOpen, onClose }) {
                           to="/search"
                           state={{ query }}
                           onClick={onClose}
-                          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-700 hover:scale-105 transition duration-300 ease-in-out"
+                          className="inline-flex items-center gap-2 px-10 py-5 text-sm font-medium text-xl text-blue-600 bg-blue-50 border border-blue-200 rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-700 hover:scale-105 transition duration-300 ease-in-out"
                         >
                           <span>Lihat hasil lainnya</span>
                           <motion.div
