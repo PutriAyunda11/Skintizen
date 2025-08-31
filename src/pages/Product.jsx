@@ -1,11 +1,16 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-export default function Product() {
+export default function Product({ addToCart }) {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedShade, setSelectedShade] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
+  const [popupType, setPopupType] = useState("error");
+  const [selectedSize, _setSelectedSize] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const data = localStorage.getItem("skintiz");
@@ -33,19 +38,63 @@ export default function Product() {
   };
 
   const handleAddToCart = () => {
-    alert(
+    // kalau produk punya shade → wajib pilih
+    if (
+      Array.isArray(product.shade) &&
+      product.shade.length > 0 &&
+      !selectedShade
+    ) {
+      setPopupMessage("Silakan pilih shade terlebih dahulu!");
+      setPopupType("error");
+      setShowPopup(true);
+      return;
+    }
+
+    if (addToCart) {
+      addToCart(product, selectedSize, selectedShade, quantity);
+    }
+    setPopupMessage(
       `Produk ditambahkan: ${product.nama} (${quantity}x) - Rp ${(
         product.harga * quantity
       ).toLocaleString("id-ID")}`
     );
+    setPopupType("success");
+    setShowPopup(true);
   };
 
   const handleBuyNow = () => {
-    alert(
-      `Pesan sekarang: ${product.nama} (${quantity}x) - Rp ${(
-        product.harga * quantity
-      ).toLocaleString("id-ID")}`
-    );
+    const isLoggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+    if (!isLoggedIn || !currentUser) {
+      setPopupMessage("Silakan login terlebih dahulu!");
+      setPopupType("error");
+      setShowPopup(true);
+      return;
+    }
+
+    // kalau produk punya shade → wajib pilih
+    if (
+      Array.isArray(product.shade) &&
+      product.shade.length > 0 &&
+      !selectedShade
+    ) {
+      setPopupMessage("Silakan pilih shade terlebih dahulu!");
+      setPopupType("error");
+      setShowPopup(true);
+      return;
+    }
+
+    const orderData = {
+      id: product.id,
+      nama: product.nama,
+      foto: product.foto,
+      harga: product.harga,
+      kuantitas: quantity,
+      shade: selectedShade || null,
+    };
+
+    navigate("/beli-product", { state: { orderData } });
   };
 
   return (
@@ -65,7 +114,9 @@ export default function Product() {
         <div className="flex-1 flex flex-col gap-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">{product.nama}</h1>
-            <p className="text-gray-500 mt-5">Kategori: {product.jenis_produk}</p>
+            <p className="text-gray-500 mt-5">
+              Kategori: {product.jenis_produk}
+            </p>
             <p className="text-gray-800 mt-1">
               Stok: {product.stok ?? "Tidak tersedia"}
             </p>
@@ -135,11 +186,35 @@ export default function Product() {
               onClick={handleBuyNow}
               className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition"
             >
-              Pesan Sekarang
+              Buat Pesanan
             </button>
           </div>
         </div>
       </div>
+      {/* Popup */}
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-[80]">
+          <div
+            className={`bg-white rounded-xl shadow-lg p-6 w-80 text-center border-t-4 ${
+              popupType === "error" ? "border-red-500" : "border-green-500"
+            }`}
+          >
+            <p
+              className={`text-base font-semibold mb-4 ${
+                popupType === "error" ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {popupMessage}
+            </p>
+            <button
+              onClick={() => setShowPopup(false)}
+              className="mt-2 bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg transition"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

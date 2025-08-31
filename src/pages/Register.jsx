@@ -7,7 +7,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(null);
   const [type, setType] = useState("error");
-  const [showPopup, setShowPopup] = useState(false); 
+  const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -40,7 +40,9 @@ export default function Register() {
     // password tidak boleh punya huruf/angka sama lebih dari 2 kali berurutan
     if (/(.)\1{2,}/.test(password)) {
       setType("error");
-      setMessage("Password tidak boleh mengandung karakter yang sama lebih dari 2 kali berturut-turut!");
+      setMessage(
+        "Password tidak boleh mengandung karakter yang sama lebih dari 2 kali berturut-turut!"
+      );
       setShowPopup(true);
       return;
     }
@@ -53,16 +55,18 @@ export default function Register() {
       return;
     }
 
-    // buat data user baru
     const newUser = { nama, email, password };
     users.push(newUser);
     localStorage.setItem("users", JSON.stringify(users));
+
+    const alamatList = JSON.parse(localStorage.getItem("alamat")) || [];
+    alamatList.push({ nama, email, namaUser: nama });
+    localStorage.setItem("alamat", JSON.stringify(alamatList));
 
     setType("success");
     setMessage("Registrasi berhasil! Silakan login.");
     setShowPopup(true);
 
-    // redirect setelah 2 detik
     setTimeout(() => {
       navigate("/login");
     }, 2000);

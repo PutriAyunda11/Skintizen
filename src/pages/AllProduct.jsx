@@ -48,7 +48,7 @@ export default function AllProduct() {
   };
 
   return (
-    <div className="max-w-full mx-auto flex flex-col lg:flex-row gap-6 p-0 sm:pb-12 sm:pt-7 lg:p-6 mt-12 sm:mt-25">
+    <div className="max-w-full mx-auto flex flex-col lg:flex-row gap-6 p-0 sm:pb-12 sm:pt-7 lg:p-6 mt-12 sm:mt-35">
       <Filtered
         products={allProduct}
         onFilterChange={setFilteredProducts}

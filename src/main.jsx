@@ -17,69 +17,46 @@ import Search from './pages/Search.jsx';
 import AllProduct from './pages/AllProduct.jsx';
 import Pesanan from './pages/Pesanan.jsx';
 import Product from './pages/Product.jsx';
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import Alamat from './pages/Alamat.jsx';
+import Riwayat from './pages/Riwayat.jsx';
+import BeliProduct from './pages/BeliProduct.jsx';
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      { path: "/", element: <Home /> },
+      { path: "/login", element: <Login /> },
+      { path: "/register", element: <Register /> },
+      { path: "/best-sellers", element: <BestSeller /> },
+      { path: "/new-launch", element: <NewLaunch /> },
+      { path: "/skin-care", element: <Skincare /> },
+      { path: "/makeup", element: <MakeUp /> },
+      { path: "/search", element: <Search /> },
+      { path: "/all-product", element: <AllProduct /> },
+      { path: "/product/:id", element: <Product /> },
 
-const router = createBrowserRouter(
-  [{
-    path:"/",
-    element :(
-     <App/>
-    ),
-    children:[
+      //bungkus route yang butuh login
       {
-        path:"/",
-        element: <Home/>
+        element: <ProtectedRoute />,
+        children: [
+          { path: "/pesanan", element: <Pesanan /> },
+          { path: "/alamat", element: <Alamat /> },  
+          { path: "/riwayat", element: <Riwayat/> },
+        ]
       },
-      {
-        path:"/login",
-        element: <Login/>
-      },
-      {
-        path:"/best-sellers",
-        element: <BestSeller/>
-      },
-      {
-        path:"/new-launch",
-        element: <NewLaunch/>
-      },
-      {
-        path:"/skin-care",
-        element: <Skincare/>
-      },
-      {
-        path:"/makeup",
-        element: <MakeUp/>
-      },
-      // {
-      //   path:"/about",
-      //   element: <Home/>
-      // },
-      {
-        path:"/register",
-        element: <Register/>
-      },
-      {
-        path:"/search",
-        element: <Search/>
-      },
-      {
-        path:"/all-product",
-        element: <AllProduct/>
-      },
-      {
-        path:"//product/:id",
-        element: <Product/>
-      },
-      {
-        path:"/pesanan",
-        element: <Pesanan/>
-      },
-    ]
+    ],
+  },
+  {
+    path: "/beli-product",
+    element:<BeliProduct />
   }
 ]);
 
 createRoot(document.getElementById("root")).render(
- <StrictMode>
- <RouterProvider router={router} />
- </StrictMode>
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>
 );

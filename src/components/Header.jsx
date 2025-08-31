@@ -27,7 +27,7 @@ export default function Header({ isSearchOpen, setIsSearchOpen }) {
 
   // kategori untuk HeaderSmall
   const showHeaderSmall =
-    location.pathname === "/skin-care" || location.pathname === "/makeup";
+    location.pathname === "/skin-care" || location.pathname === "/makeup" || location.pathname === "/all-product";
   const category = location.pathname.slice(1);
 
   return (
@@ -165,34 +165,41 @@ export default function Header({ isSearchOpen, setIsSearchOpen }) {
           )}
         </AnimatePresence>
 
-        {/* HeaderSmall */}
-        {showHeaderSmall && (
-          <div className="hidden lg:flex w-full bg-white shadow-sm border-t border-gray-200 z-40">
-            <div className="w-full py-2 flex items-center justify-start gap-2 text-sm text-gray-600 px-6">
-              <NavLink to="/" className="hover:underline">
-                Home
-              </NavLink>{" "}
-              &gt;{" "}
-              <NavLink to="/all-product" className="hover:underline ml-1">
-                All Products
-              </NavLink>{" "}
-              &gt;{" "}
-              <NavLink
-                to={
-                  category === "skin-care"
-                    ? "/skin-care"
-                    : category === "makeup"
-                    ? "/makeup"
-                    : "/all-product"
-                }
-                className="hover:underline ml-1 font-medium capitalize"
-              >
-                {category}
-              </NavLink>
-            </div>
-          </div>
-        )}
-
+{/* HeaderSmall */}
+{showHeaderSmall && (
+  <div className="hidden lg:flex w-full bg-white shadow-sm border-t border-gray-200 z-40">
+    <div className="w-full py-2 flex items-center justify-start gap-2 text-sm text-gray-600 px-6">
+      <NavLink to="/" className="hover:underline">
+        Home
+      </NavLink>{" "}
+      &gt;{" "}
+      <NavLink
+        to="/all-product"
+        className="hover:underline ml-1 font-medium capitalize"
+      >
+        All Products
+      </NavLink>
+      {category !== "all-product" && (
+        <>
+          {" "}
+          &gt;{" "}
+          <NavLink
+            to={
+              category === "skin-care"
+                ? "/skin-care"
+                : category === "makeup"
+                ? "/makeup"
+                : "/all-product"
+            }
+            className="hover:underline ml-1 font-medium capitalize"
+          >
+            {category}
+          </NavLink>
+        </>
+      )}
+    </div>
+  </div>
+)}
         <AnimatePresence>
           {isSearchOpen && (
             <DrawerSearch

@@ -15,6 +15,9 @@ export default function DetailProduct({
   const [selectedShade, setSelectedShade] = useState(null);
   const [selectedSize, _setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
+const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
+  const [popupType, setPopupType] = useState("error");
   const navigate = useNavigate();
 
   if (!product) return null;
@@ -28,27 +31,61 @@ export default function DetailProduct({
   };
 
   const handleAddToCart = () => {
+    // kalau produk punya shade → wajib pilih
+    if (Array.isArray(product.shade) && product.shade.length > 0 && !selectedShade) {
+      setPopupMessage("Silakan pilih shade terlebih dahulu!");
+      setPopupType("error");
+      setShowPopup(true);
+      return;
+    }
+
     if (addToCart) {
       addToCart(product, selectedSize, selectedShade, quantity);
     }
-    alert(
+    setPopupMessage(
       `Produk ditambahkan: ${product.nama} (${quantity}x) - Rp ${(
         product.harga * quantity
       ).toLocaleString("id-ID")}`
     );
+    setPopupType("success");
+    setShowPopup(true);
   };
 
   const handleBuyNow = () => {
-    alert(
-      `Pesan sekarang: ${product.nama} (${quantity}x) - Rp ${(
-        product.harga * quantity
-      ).toLocaleString("id-ID")}`
-    );
+    const isLoggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+    if (!isLoggedIn || !currentUser) {
+      setPopupMessage("Silakan login terlebih dahulu!");
+      setPopupType("error");
+      setShowPopup(true);
+      return;
+    }
+
+    // kalau produk punya shade → wajib pilih
+    if (Array.isArray(product.shade) && product.shade.length > 0 && !selectedShade) {
+      setPopupMessage("Silakan pilih shade terlebih dahulu!");
+      setPopupType("error");
+      setShowPopup(true);
+      return;
+    }
+
+    const orderData = {
+      id: product.id,
+      nama: product.nama,
+      foto: product.foto,
+      harga: product.harga,
+      kuantitas: quantity,
+      shade: selectedShade || null,
+    };
+
+    navigate("/beli-product", { state: { orderData } });
+    onClose(); 
   };
 
   const handleGoToDetailPage = () => {
-    navigate(`/product/${product.id}`); // arahkan ke Product.jsx
-    onClose(); // tutup modal setelah navigasi
+    navigate(`/product/${product.id}`); 
+    onClose();
   };
 
   return (
@@ -163,7 +200,7 @@ export default function DetailProduct({
               onClick={handleBuyNow}
               className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg"
             >
-              Pesan Sekarang!
+              Buat Pesanan
             </button>
 
             {/* Rincian Produk */}
@@ -175,6 +212,30 @@ export default function DetailProduct({
             </span>
           </div>
         </div>
+        {/* Popup */}
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-[80]">
+          <div
+            className={`bg-white rounded-xl shadow-lg p-6 w-80 text-center border-t-4 ${
+              popupType === "error" ? "border-red-500" : "border-green-500"
+            }`}
+          >
+            <p
+              className={`text-base font-semibold mb-4 ${
+                popupType === "error" ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {popupMessage}
+            </p>
+            <button
+              onClick={() => setShowPopup(false)}
+              className="mt-2 bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg transition"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
       </MotionDiv>
     </>
   );

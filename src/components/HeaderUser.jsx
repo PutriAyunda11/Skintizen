@@ -8,6 +8,7 @@ export default function HeaderUser() {
   const navItems = [
     { path: "/pesanan", label: "Pesanan" },
     { path: "/alamat", label: "Alamat" },
+    { path: "/riwayat", label: "Riwayat" },
   ];
 
   const handleLogout = () => {
@@ -21,8 +22,8 @@ export default function HeaderUser() {
 
   return (
     <>
-      <nav className="border-t border-gray-200 bg-white">
-        <div className="hidden sm:flex max-w-7xl mx-auto justify-center space-x-6 md:space-x-12 py-3 text-sm font-bold text-gray-600">
+      <nav className="border border-gray-200 bg-white">
+        <div className="flex max-w-7xl mx-auto justify-center space-x-6 md:space-x-13 py-8 text-sm font-bold text-gray-600">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
