@@ -15,30 +15,41 @@ export default function Footer() {
           <h1 className="text-xl font-bold">SKINTIZEN</h1>
         </div>
         <div>
-          <h3 className="font-semibold mb-2">NEWSLETTER</h3>
-          <p className="text-sm mb-3">
-            Sign up and get limited <span className="font-bold">10% OFF!</span>
+          <h3 className="font-semibold mb-2">CONTACT US</h3>
+                    <p className="flex items-center gap-2 mb-4">
+            <Mail size={16} /> CSskintific@gmail.com
           </p>
-          <div className="flex border rounded-md overflow-hidden mb-4">
-            <input
-              type="email"
-              placeholder="Email mu"
-              className="flex-grow min-w-0 px-3 py-2 outline-none text-sm"
-            />
-            <button className="bg-black text-white px-4 shrink-0">→</button>
-          </div>
           <div className="flex space-x-4">
-            <Instagram className="cursor-pointer" size={20} />
-            <Youtube className="cursor-pointer" size={20} />
-            <ShoppingCart className="cursor-pointer" size={20} />
+
+            <div className="flex space-x-4">
+              <a
+                href="https://www.instagram.com/skintificofficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Instagram className="cursor-pointer" size={20} />
+              </a>
+
+              <a
+                href="https://youtube.com/@skintific-indonesia?si=ctjel3fwVSYBedx9"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Youtube className="cursor-pointer" size={20} />
+              </a>
+
+              <a
+                href="https://id.shp.ee/Qd9RRzG"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ShoppingCart className="cursor-pointer" size={20} />
+              </a>
+            </div>
           </div>
         </div>
 
         <div>
-          <h3 className="font-semibold mb-2">CONTACT US</h3>
-          <p className="flex items-center gap-2 mb-4">
-            <Mail size={16} /> CSskintific@gmail.com
-          </p>
           <h3 className="font-semibold mb-2">MENU</h3>
           <ul className="space-y-1">
             <li>
