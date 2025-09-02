@@ -113,7 +113,6 @@ export default function Register() {
         onSubmit={handleSubmit}
         className="max-w-xl w-full mx-auto flex flex-col gap-6"
       >
-        {/* Nama */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Nama
@@ -126,8 +125,6 @@ export default function Register() {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
           />
         </div>
-
-        {/* Email */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Email
@@ -140,8 +137,6 @@ export default function Register() {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
           />
         </div>
-
-        {/* Password */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Password

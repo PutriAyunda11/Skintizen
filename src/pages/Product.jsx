@@ -1,15 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-export default function Product({ addToCart }) {
+export default function Product() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedShade, setSelectedShade] = useState(null);
-  const [quantity, setQuantity] = useState(1);
+  const [kuantitas, setKuantitas] = useState(1);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [popupType, setPopupType] = useState("error");
-  const [selectedSize, _setSelectedSize] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,8 +28,8 @@ export default function Product({ addToCart }) {
     );
   }
 
-  const handleQuantityChange = (type) => {
-    setQuantity((prev) => {
+  const handleKuantitasChange = (type) => {
+    setKuantitas((prev) => {
       if (type === "inc") return prev + 1;
       if (type === "dec") return prev > 1 ? prev - 1 : 1;
       return prev;
@@ -38,7 +37,25 @@ export default function Product({ addToCart }) {
   };
 
   const handleAddToCart = () => {
-    // kalau produk punya shade → wajib pilih
+    const isLoggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+    if (!isLoggedIn || !currentUser) {
+      setPopupMessage("Silakan login terlebih dahulu!");
+      setPopupType("error");
+      setShowPopup(true);
+      return;
+    }
+
+    if (product.stok === 0) {
+      setPopupMessage(
+        "Stok produk habis! Tidak bisa menambahkan ke keranjang."
+      );
+      setPopupType("error");
+      setShowPopup(true);
+      return;
+    }
+
     if (
       Array.isArray(product.shade) &&
       product.shade.length > 0 &&
@@ -50,14 +67,34 @@ export default function Product({ addToCart }) {
       return;
     }
 
-    if (addToCart) {
-      addToCart(product, selectedSize, selectedShade, quantity);
-    }
-    setPopupMessage(
-      `Produk ditambahkan: ${product.nama} (${quantity}x) - Rp ${(
-        product.harga * quantity
-      ).toLocaleString("id-ID")}`
+    const keranjang = JSON.parse(localStorage.getItem("keranjang")) || [];
+
+    const existingIndex = keranjang.findIndex(
+      (k) =>
+        k.id === product.id &&
+        k.namaUser === currentUser.nama &&
+        k.emailUser === currentUser.email &&
+        k.shade === (selectedShade || null)
     );
+
+    if (existingIndex === -1) {
+      keranjang.push({
+        ...product,
+        kuantitas: kuantitas,
+        subtotal: product.harga * kuantitas,
+        namaUser: currentUser.nama,
+        emailUser: currentUser.email,
+        shade: selectedShade || null,
+      });
+    } else {
+      keranjang[existingIndex].kuantitas += kuantitas;
+      keranjang[existingIndex].subtotal =
+        keranjang[existingIndex].kuantitas * product.harga;
+    }
+
+    localStorage.setItem("keranjang", JSON.stringify(keranjang));
+
+    setPopupMessage(`Produk berhasil ditambahkan ke keranjang!`);
     setPopupType("success");
     setShowPopup(true);
   };
@@ -73,7 +110,13 @@ export default function Product({ addToCart }) {
       return;
     }
 
-    // kalau produk punya shade → wajib pilih
+    if (product.stok === 0) {
+      setPopupMessage("Stok produk habis! Tidak bisa melakukan pesanan.");
+      setPopupType("error");
+      setShowPopup(true);
+      return;
+    }
+
     if (
       Array.isArray(product.shade) &&
       product.shade.length > 0 &&
@@ -89,8 +132,8 @@ export default function Product({ addToCart }) {
       id: product.id,
       nama: product.nama,
       foto: product.foto,
-      harga: product.harga,
-      kuantitas: quantity,
+      subtotal: product.harga,
+      kuantitas: kuantitas,
       shade: selectedShade || null,
     };
 
@@ -99,9 +142,7 @@ export default function Product({ addToCart }) {
 
   return (
     <div className="pt-28 sm:pt-32 lg:pt-40 max-w-6xl mx-auto px-4">
-      {/* Layout Foto + Info */}
       <div className="flex flex-col lg:flex-row gap-10">
-        {/* Foto */}
         <div className="flex-1 flex justify-center">
           <img
             src={product.foto || "/placeholder.png"}
@@ -110,7 +151,6 @@ export default function Product({ addToCart }) {
           />
         </div>
 
-        {/* Info */}
         <div className="flex-1 flex flex-col gap-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">{product.nama}</h1>
@@ -125,14 +165,12 @@ export default function Product({ addToCart }) {
             </p>
           </div>
 
-          {/* Deskripsi */}
           {product.deskripsi && (
             <p className="text-gray-700 leading-relaxed text-justify">
               {product.deskripsi}
             </p>
           )}
 
-          {/* Shade */}
           {Array.isArray(product.shade) && product.shade.length > 0 && (
             <div className="flex flex-col gap-2">
               <h4 className="font-medium">Pilih Shade:</h4>
@@ -154,54 +192,74 @@ export default function Product({ addToCart }) {
             </div>
           )}
 
-          {/* Quantity */}
+          {/* Kuantitas */}
           <div className="flex flex-col gap-2">
-            <h4 className="font-medium">Kuantitas:</h4>
+            <h4 className="font-medium text-left">Kuantitas:</h4>
             <div className="flex items-center border rounded-lg w-fit">
               <button
-                onClick={() => handleQuantityChange("dec")}
-                className="px-3 py-1 text-lg hover:bg-gray-200"
+                onClick={() => handleKuantitasChange("dec")}
+                className="px-3 py-1 text-lg rounded-lg hover:bg-gray-200"
               >
                 -
               </button>
-              <span className="px-4">{quantity}</span>
+              <span className="px-4">{kuantitas}</span>
               <button
-                onClick={() => handleQuantityChange("inc")}
-                className="px-3 py-1 text-lg hover:bg-gray-200"
+                onClick={() => handleKuantitasChange("inc")}
+                disabled={product.stok === 0 || kuantitas >= product.stok}
+                className={`px-3 py-1 text-lg rounded-lg hover:bg-gray-200 ${
+                  product.stok === 0 || kuantitas >= product.stok
+                    ? "cursor-not-allowed bg-gray-200 hover:bg-gray-200"
+                    : ""
+                }`}
               >
                 +
               </button>
             </div>
+            {product.stok !== 0 && kuantitas >= product.stok && (
+              <span className="text-xs text-red-500 mt-1">
+                Maksimum stok tercapai
+              </span>
+            )}
           </div>
 
-          {/* Buttons */}
-          <div className="mt-4 flex flex-col sm:flex-row gap-3">
+          <div className="mt-0 flex flex-col gap-3">
             <button
               onClick={handleAddToCart}
-              className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition"
+              disabled={product.stok === 0}
+              className={`w-full font-semibold py-2 rounded-lg transition ${
+                product.stok === 0
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-500 hover:bg-green-600 text-white"
+              }`}
             >
               Tambah ke Keranjang
             </button>
+
             <button
               onClick={handleBuyNow}
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition"
+              disabled={product.stok === 0}
+              className={`w-full font-semibold py-2 rounded-lg transition ${
+                product.stok === 0
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600 text-white"
+              }`}
             >
               Buat Pesanan
             </button>
           </div>
         </div>
       </div>
-      {/* Popup */}
+
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-[80]">
           <div
             className={`bg-white rounded-xl shadow-lg p-6 w-80 text-center border-t-4 ${
-              popupType === "error" ? "border-red-500" : "border-green-500"
+              popupType === "error" ? "border-red-500" : "border-blue-500"
             }`}
           >
             <p
               className={`text-base font-semibold mb-4 ${
-                popupType === "error" ? "text-red-600" : "text-green-600"
+                popupType === "error" ? "text-red-600" : "text-blue-600"
               }`}
             >
               {popupMessage}

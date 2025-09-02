@@ -25,7 +25,6 @@ export default function Pagination({ itemsPerPage, products, children }) {
 
   return (
     <>
-      {/* Render produk dari parent */}
       {children(currentItems)}
 
       {/* Kontrol pagination */}

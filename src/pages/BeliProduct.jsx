@@ -3,8 +3,13 @@ import { useState, useEffect } from "react";
 
 export default function BeliProduct() {
   const location = useLocation();
-  const { orderData } = location.state || {};
+  let { orderData } = location.state || {};
   const navigate = useNavigate();
+
+  //  pastikan orderData selalu array
+  if (orderData && !Array.isArray(orderData)) {
+    orderData = [orderData];
+  }
 
   const [alamatList, setAlamatList] = useState([]);
   const [selectedAlamatIndex, setSelectedAlamatIndex] = useState(null);
@@ -18,19 +23,28 @@ export default function BeliProduct() {
   const [showPesananPopup, setShowPesananPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
 
+  const [showAlamatPopup, setShowAlamatPopup] = useState(false);
+  const [alamatMessage, setAlamatMessage] = useState("");
+
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   useEffect(() => {
-    const alamatAll = JSON.parse(localStorage.getItem("alamat")) || [];
-    if (currentUser) {
-      const alamatUser = alamatAll.filter(
-        (item) => item.namaUser === currentUser.nama
-      );
-      setAlamatList(alamatUser);
-    }
-  }, []);
+    const loadAlamat = () => {
+      const alamatAll = JSON.parse(localStorage.getItem("alamat")) || [];
+      if (currentUser) {
+        const alamatUser = alamatAll.filter(
+          (item) => item.namaUser === currentUser.nama
+        );
+        setAlamatList(alamatUser);
+      }
+    };
 
-  if (!orderData) {
+    loadAlamat();
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+
+  if (!orderData || orderData.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>Data produk tidak ditemukan!</p>
@@ -38,8 +52,12 @@ export default function BeliProduct() {
     );
   }
 
-  // subtotal & ongkir
-  const subtotal = orderData.harga * orderData.kuantitas;
+  // 🔥 hitung subtotal dengan aman
+  const subtotal = orderData.reduce(
+    (acc, item) => acc + (item.subtotal || 0),
+    0
+  );
+
   const getOngkir = () => {
     const provinsi = alamatList[selectedAlamatIndex]?.provinsi || "";
     switch (provinsi) {
@@ -56,7 +74,6 @@ export default function BeliProduct() {
   const ongkir = getOngkir();
   const total = subtotal + ongkir;
 
-  // generate kode pembayaran random
   const generateKodePembayaran = () => {
     let kode = "";
     for (let i = 0; i < 15; i++) {
@@ -65,78 +82,145 @@ export default function BeliProduct() {
     return kode;
   };
 
-  // tombol buat pesanan → tampilkan dropdown kode bayar
+  const isAlamatLengkap = (alamat) => {
+    return (
+      alamat &&
+      alamat.provinsi &&
+      alamat.kota &&
+      alamat.kecamatan &&
+      alamat.kodePos &&
+      alamat.nomorTelepon
+    );
+  };
+
   const handleBuatPesanan = () => {
+    const selectedAlamat = alamatList[selectedAlamatIndex];
+
+    if (!selectedAlamat || !isAlamatLengkap(selectedAlamat)) {
+      setAlamatMessage(
+        "Alamat yang dipilih belum lengkap! Silakan edit alamat terlebih dahulu."
+      );
+      setShowAlamatPopup(true);
+      return;
+    }
+
     if (!kodePembayaran) {
       setKodePembayaran(generateKodePembayaran());
     }
     setShowDropdown(true);
   };
 
-// selesai bayar → simpan riwayat → popup
-const handleSelesai = () => {
-  const data = {
-    statusPembayaran: "Selesai",
-    statusPesanan: "Belum Selesai",
-    message: "Pesanan berhasil! Pembayaran selesai.",
-  };
-  savePesanan(data);
-};
-
-// bayar nanti → simpan riwayat → popup
-const handleNanti = () => {
-  const data = {
-    statusPembayaran: "Belum Selesai",
-    statusPesanan: "Belum Selesai",
-    message: "Pesanan berhasil, tapi belum dibayar!",
-  };
-  savePesanan(data);
-};
-
-// simpan ke localStorage
-const savePesanan = ({ statusPembayaran, statusPesanan, message }) => {
-  const riwayat = JSON.parse(localStorage.getItem("pesanan")) || [];
-  const dataPesanan = {
-    foto: orderData.foto || "/placeholder.png",
-    nama: orderData.nama,
-    kuantitas: orderData.kuantitas,
-    subtotal,
-    ongkir,
-    total,
-    shade: orderData.shade || null,
-    metodeBayar,
-    alamat: alamatList[selectedAlamatIndex],
-    statusPembayaran,
-    kodePembayaran,
-    statusPesanan,
-    namaUser: currentUser?.nama || "Guest",
-    tanggalPesan: new Date().toLocaleString("id-ID", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-
+  const handleSelesai = () => {
+    const data = {
+      statusPembayaran: "Selesai",
+      statusPesanan: "Belum Selesai",
+      message: "Pesanan berhasil! Pembayaran selesai.",
+    };
+    savePesanan(data);
   };
 
-  riwayat.push(dataPesanan);
-  localStorage.setItem("pesanan", JSON.stringify(riwayat));
+  const handleNanti = () => {
+    const data = {
+      statusPembayaran: "Belum Selesai",
+      statusPesanan: "Belum Selesai",
+      message: "Pesanan berhasil, tapi belum dibayar!",
+    };
+    savePesanan(data);
+  };
 
-  setShowDropdown(false);
-  setPopupMessage(message);
-  setShowPesananPopup(true);
-};
+  const updateStokProduk = () => {
+    const semuaProduk = JSON.parse(localStorage.getItem("skintiz")) || [];
 
-  // tombol ok di popup
+    orderData.forEach((order) => {
+      const indexProduk = semuaProduk.findIndex((p) => p.id === order.id);
+      if (indexProduk !== -1) {
+        semuaProduk[indexProduk].stok -= order.kuantitas;
+        if (semuaProduk[indexProduk].stok < 0) {
+          semuaProduk[indexProduk].stok = 0;
+        }
+      }
+    });
+
+    localStorage.setItem("skintiz", JSON.stringify(semuaProduk));
+  };
+
+  const savePesanan = ({ statusPembayaran, statusPesanan, message }) => {
+    const riwayat = JSON.parse(localStorage.getItem("pesanan")) || [];
+    const selectedAlamat = alamatList[selectedAlamatIndex];
+
+    const alamatLengkapPesanan = {
+      namaUser: currentUser?.nama || "Guest",
+      emailUser: currentUser?.email || "Guest",
+      nama: selectedAlamat?.nama || "",
+      nomorTelepon: selectedAlamat?.nomorTelepon || "",
+      provinsi: selectedAlamat?.provinsi || "",
+      kota: selectedAlamat?.kota || "",
+      kecamatan: selectedAlamat?.kecamatan || "",
+      kodePos: selectedAlamat?.kodePos || "",
+      detail: selectedAlamat?.detail || "",
+      alamatLengkap: selectedAlamat?.alamatLengkap || "",
+    };
+
+    const dataPesanan = {
+      produk: orderData.map((order) => ({
+        id: order.id,
+        foto: order.foto || "/placeholder.png",
+        nama: order.nama,
+        kuantitas: order.kuantitas,
+        subtotal: order.subtotal,
+        shade: order.shade || null,
+      })),
+      subtotal,
+      ongkir,
+      total,
+      metodeBayar,
+      alamat: alamatLengkapPesanan,
+      statusPembayaran,
+      kodePembayaran,
+      statusPesanan,
+      namaUser: currentUser?.nama || "Guest",
+      emailUser: currentUser?.email || "Guest",
+      tanggalPesan: new Date().toLocaleString("id-ID", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+
+    riwayat.push(dataPesanan);
+    localStorage.setItem("pesanan", JSON.stringify(riwayat));
+
+    updateStokProduk();
+
+    let keranjang = JSON.parse(localStorage.getItem("keranjang")) || [];
+
+    keranjang = keranjang.filter(
+      (item) =>
+        !orderData.some(
+          (order) => order.id === item.id && order.kuantitas === item.kuantitas
+        )
+    );
+
+    localStorage.setItem("keranjang", JSON.stringify(keranjang));
+
+    setShowDropdown(false);
+    setPopupMessage(message);
+    setShowPesananPopup(true);
+  };
+
   const handleOk = () => {
     setShowPesananPopup(false);
-    navigate("/pesanan");
+    navigate("/pesanan", { state: { refresh: Date.now() } });
+  };
+
+  const handleOkAlamat = () => {
+    setShowAlamatPopup(false);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 md:bg-gray-50 bg-white">
-      {/* Header */}
       <div
         className="w-full bg-white py-8 text-center font-bold text-2xl cursor-pointer"
         onClick={() => navigate("/")}
@@ -148,8 +232,6 @@ const savePesanan = ({ statusPembayaran, statusPesanan, message }) => {
       <div className="flex flex-col-reverse md:flex-row w-full min-h-[calc(100vh-64px)]">
         {/* Kiri (alamat + metode bayar) */}
         <div className="w-full md:w-1/2 p-6 md:p-10 md:pl-20 flex flex-col gap-6 bg-white md:bg-gray-50">
-          {" "}
-          {/* Alamat */}
           <div className="flex flex-col gap-2">
             <h4 className="font-medium text-lg">Alamat Pengiriman</h4>
             {alamatList.length === 0 ? (
@@ -210,25 +292,30 @@ const savePesanan = ({ statusPembayaran, statusPesanan, message }) => {
 
         {/* Kanan: Ringkasan */}
         <div className="w-full md:w-1/2 p-6 md:p-10 md:pr-20 flex flex-col gap-6 bg-white md:bg-gray-200">
-          {" "}
-          <div className="flex gap-6">
-            <div className="relative">
-              <img
-                src={orderData.foto || "/placeholder.png"}
-                alt={orderData.nama}
-                className="w-32 h-32 md:w-50 md:h-50 object-cover rounded-lg"
-              />
-              <div className="absolute top-1 right-1 bg-gray-600 text-white text-lg font-bold px-3 py-1 rounded-full">
-                {orderData.kuantitas}
+          {orderData.map((order, idx) => (
+            <div key={idx} className="flex gap-6 border-b pb-4">
+              <div className="relative">
+                <img
+                  src={order.foto || "/placeholder.png"}
+                  alt={order.nama}
+                  className="w-32 h-32 md:w-50 md:h-50 object-cover rounded-lg"
+                />
+                <div className="absolute top-1 right-1 bg-gray-600 text-white text-lg font-bold px-3 py-1 rounded-full">
+                  {order.kuantitas}
+                </div>
+              </div>
+              <div className="flex flex-col justify-center gap-2">
+                <h3 className="text-lg font-semibold">{order.nama}</h3>
+                {order.shade && (
+                  <p className="text-gray-600">Shade: {order.shade}</p>
+                )}
+                <p className="text-pink-600 font-semibold">
+                  Rp {order.subtotal?.toLocaleString("id-ID") || {}}
+                </p>
               </div>
             </div>
-            <div className="flex flex-col justify-center gap-2">
-              <h3 className="text-lg font-semibold">{orderData.nama}</h3>
-              {orderData.shade && (
-                <p className="text-gray-600">Shade: {orderData.shade}</p>
-              )}
-            </div>
-          </div>
+          ))}
+
           <div className="flex justify-between text-md">
             <span>Subtotal:</span>
             <span>Rp {subtotal.toLocaleString("id-ID")}</span>
@@ -274,11 +361,29 @@ const savePesanan = ({ statusPembayaran, statusPesanan, message }) => {
       {showPesananPopup && (
         <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-2xl shadow-xl w-96 text-center">
-            <h2 className="text-lg font-bold">Pesanan Berhasil dibuat!</h2>
+            <h2 className="text-lg font-bold">Pesanan</h2>
             <p className="mt-2 text-gray-600">{popupMessage}</p>
             <button
               onClick={handleOk}
               className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Popup alamat belum lengkap */}
+      {showAlamatPopup && (
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-2xl shadow-xl w-96 text-center">
+            <h2 className="text-lg font-bold text-red-500">
+              Alamat Tidak Lengkap
+            </h2>
+            <p className="mt-2 text-gray-600">{alamatMessage}</p>
+            <button
+              onClick={handleOkAlamat}
+              className="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
             >
               OK
             </button>

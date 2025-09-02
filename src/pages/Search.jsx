@@ -10,6 +10,7 @@ export default function Search() {
   const query = location.state?.query || ""; // ambil query dari state
   const [results, setResults] = useState([]);
   const itemsPerPage = 10; // jumlah item per halaman
+  const [cartItems, setCartItems] = useState({});
 
   useEffect(() => {
     if (!query) return;
@@ -36,6 +37,33 @@ export default function Search() {
     setIsDetailOpen(true);
   };
 
+  const incrementCart = (id) => {
+    setCartItems((prev) => ({
+      ...prev,
+      [id]: prev[id] ? prev[id] + 1 : 1,
+    }));
+  };
+
+  const decrementCart = (id) => {
+    setCartItems((prev) => {
+      const kuantitas = prev[id] ? prev[id] - 1 : 0;
+      if (kuantitas <= 0) {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+      }
+      return { ...prev, [id]: kuantitas };
+    });
+  };
+
+  const resetKuantitas = (id) => {
+    setCartItems((prev) => {
+      const newState = { ...prev };
+      delete newState[id]; // hapus kuantitas sehingga kembali ke 0
+      return newState;
+    });
+  };
+
   return (
     <div className="min-h-screen p-6 bg-gray-50 mt-25">
       <h1 className="text-2xl font-bold m-6 text-center">
@@ -49,10 +77,11 @@ export default function Search() {
               <ProductCard
                 key={item.id}
                 item={item}
-                qty={0}
-                incrementCart={() => {}}
-                decrementCart={() => {}}
+                kuantitas={cartItems[item.id] || 0}
+                incrementCart={() => incrementCart(item.id)}
+                decrementCart={() => decrementCart(item.id)}
                 onOpenDetail={handleOpenDetail}
+                resetKuantitas={resetKuantitas}
               />
             ))}
           </div>
@@ -64,10 +93,11 @@ export default function Search() {
                   <ProductCard
                     key={item.id}
                     item={item}
-                    qty={0}
-                    incrementCart={() => {}}
-                    decrementCart={() => {}}
+                    kuantitas={cartItems[item.id] || 0} // gunakan state cartItems
+                    incrementCart={() => incrementCart(item.id)}
+                    decrementCart={() => decrementCart(item.id)}
                     onOpenDetail={handleOpenDetail}
+                    resetKuantitas={resetKuantitas}
                   />
                 ))}
               </div>
@@ -85,9 +115,6 @@ export default function Search() {
           onClose={() => setIsDetailOpen(false)}
           product={selectedProduct}
           overlayOpacity="bg-black/60"
-          addToCart={(p, size, shade) =>
-            console.log("Tambah ke keranjang:", p, size, shade)
-          }
         />
       )}
     </div>

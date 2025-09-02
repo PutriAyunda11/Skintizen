@@ -32,13 +32,13 @@ export default function Skincare() {
 
   const decrementCart = (id) => {
     setCartItems((prev) => {
-      const qty = prev[id] ? prev[id] - 1 : 0;
-      if (qty <= 0) {
+      const kuantitas = prev[id] ? prev[id] - 1 : 0;
+      if (kuantitas <= 0) {
         const newState = { ...prev };
         delete newState[id];
         return newState;
       }
-      return { ...prev, [id]: qty };
+      return { ...prev, [id]: kuantitas };
     });
   };
 
@@ -48,6 +48,14 @@ export default function Skincare() {
   const handleOpenDetail = (allProduct) => {
     setSelectedProduct(allProduct);
     setIsDetailOpen(true);
+  };
+
+  const resetKuantitas = (id) => {
+    setCartItems((prev) => {
+      const newState = { ...prev };
+      delete newState[id]; // hapus kuantitas sehingga kembali ke 0
+      return newState;
+    });
   };
 
   return (
@@ -67,34 +75,36 @@ export default function Skincare() {
           {filteredProducts.length <= itemsPerPage ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
               {filteredProducts.map((item) => {
-                const qty = cartItems[item.id] || 0;
+                const kuantitas = cartItems[item.id] || 0;
                 return (
                   <ProductCard
                     key={item.id}
                     item={item}
-                    qty={qty}
+                    kuantitas={kuantitas}
                     incrementCart={incrementCart}
                     decrementCart={decrementCart}
                     onOpenDetail={handleOpenDetail}
+                    resetKuantitas={resetKuantitas}
                   />
                 );
               })}
             </div>
           ) : (
-            // ✅ Kalau data lebih banyak dari itemsPerPage → pakai Pagination
+            // Kalau data lebih banyak dari itemsPerPage → pakai Pagination
             <Pagination itemsPerPage={itemsPerPage} products={filteredProducts}>
               {(currentItems) => (
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                   {currentItems.map((item) => {
-                    const qty = cartItems[item.id] || 0;
+                    const kuantitas = cartItems[item.id] || 0;
                     return (
                       <ProductCard
                         key={item.id}
                         item={item}
-                        qty={qty}
+                        kuantitas={kuantitas}
                         incrementCart={incrementCart}
                         decrementCart={decrementCart}
                         onOpenDetail={handleOpenDetail}
+                        resetKuantitas={resetKuantitas}
                       />
                     );
                   })}
@@ -109,9 +119,6 @@ export default function Skincare() {
             onClose={() => setIsDetailOpen(false)}
             product={selectedProduct}
             overlayOpacity="bg-black/60"
-            addToCart={(p, size, shade) =>
-              console.log("Tambah ke keranjang:", p, size, shade)
-            }
           />
         )}
       </div>

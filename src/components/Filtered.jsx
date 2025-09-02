@@ -75,13 +75,13 @@ export default function Filtered({ products, onFilterChange, page }) {
     exit: { y: "100%", opacity: 0 },
   };
 
-  // 🔹 Helper class active
+  // Helper class active
   const activeClass = "bg-blue-100 font-medium text-blue-600 border-l-4 border-blue-500";
   const defaultClass = "block w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm";
 
   return (
     <>
-      {/* 🔹 Desktop Sidebar */}
+      {/*Desktop Sidebar */}
       <aside className="hidden lg:block w-60 flex-shrink-0 bg-white space-y-5">
         {/* Sort */}
         <div>
@@ -126,7 +126,7 @@ export default function Filtered({ products, onFilterChange, page }) {
         </div>
       </aside>
 
-      {/* 🔹 Mobile / Tablet Filter Nav */}
+      {/*Mobile / Tablet Filter Nav */}
       <nav className="block lg:hidden border-t border-gray-200 bg-white pt-5">
         <div className="flex justify-center space-x-6 py-3 text-sm font-bold text-gray-600">
           <button onClick={() => {setIsSortOpen(true); setIsAvailabilityOpen(false); setIsProductTypeOpen(false);}}>
@@ -141,78 +141,108 @@ export default function Filtered({ products, onFilterChange, page }) {
         </div>
       </nav>
 
-      {/* 🔹 Bottom Sheet Filter Mobile/Tablet */}
-      <AnimatePresence>
-        {isSortOpen && (
-          <MotionDiv
-            className="fixed bottom-0 left-0 w-full bg-white shadow-lg border-t z-50 p-4"
-            variants={sheetVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            transition={{ duration: 0.3 }}
-          >
-            <h2 className="font-semibold text-gray-700 mb-3">Urutkan</h2>
-            {sortOptions.map((option) => (
-              <button
-                key={option}
-                className={`${defaultClass} ${sortFilter === option ? activeClass : ""}`}
-                onClick={() => { setSortFilter(option); setIsSortOpen(false); }}
-              >
-                {option}
-              </button>
-            ))}
-          </MotionDiv>
-        )}
-      </AnimatePresence>
+      {/* Bottom Sheet Filter Mobile/Tablet */}
+{/* Bottom Sheet Filter Mobile/Tablet */}
+<AnimatePresence>
+  {isSortOpen && (
+    <>
+      {/* Overlay fullscreen termasuk header */}
+      <MotionDiv
+        className="fixed inset-0 bg-black/30 z-40"
+        onClick={() => setIsSortOpen(false)}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.3 }}
+        exit={{ opacity: 0 }}
+      />
 
-      <AnimatePresence>
-        {isAvailabilityOpen && (
-          <MotionDiv
-            className="fixed bottom-0 left-0 w-full bg-white shadow-lg border-t z-50 p-4"
-            variants={sheetVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            transition={{ duration: 0.3 }}
+      {/* Bottom Sheet */}
+      <MotionDiv
+        className="fixed bottom-0 left-0 w-full bg-white shadow-lg border-t z-50 p-4 pointer-events-auto"
+        variants={sheetVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        transition={{ duration: 0.3 }}
+      >
+        <h2 className="font-semibold text-gray-700 mb-3">Urutkan</h2>
+        {sortOptions.map((option) => (
+          <button
+            key={option}
+            className={`${defaultClass} ${sortFilter === option ? activeClass : ""}`}
+            onClick={() => { setSortFilter(option); setIsSortOpen(false); }}
           >
-            <h2 className="font-semibold text-gray-700 mb-3">Ketersediaan</h2>
-            {availabilityOptions.map((option) => (
-              <button
-                key={option}
-                className={`${defaultClass} ${availabilityFilter === option ? activeClass : ""}`}
-                onClick={() => { setAvailabilityFilter(option); setIsAvailabilityOpen(false); }}
-              >
-                {option}
-              </button>
-            ))}
-          </MotionDiv>
-        )}
-      </AnimatePresence>
+            {option}
+          </button>
+        ))}
+      </MotionDiv>
+    </>
+  )}
+</AnimatePresence>
+<AnimatePresence>
+  {isAvailabilityOpen && (
+    <>
+      <MotionDiv
+        className="fixed inset-0 bg-black/30 z-40"
+        onClick={() => setIsAvailabilityOpen(false)}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.3 }}
+        exit={{ opacity: 0 }}
+      />
+      <MotionDiv
+        className="fixed bottom-0 left-0 w-full bg-white shadow-lg border-t z-50 p-4 pointer-events-auto"
+        variants={sheetVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        transition={{ duration: 0.3 }}
+      >
+        <h2 className="font-semibold text-gray-700 mb-3">Ketersediaan</h2>
+        {availabilityOptions.map((option) => (
+          <button
+            key={option}
+            className={`${defaultClass} ${availabilityFilter === option ? activeClass : ""}`}
+            onClick={() => { setAvailabilityFilter(option); setIsAvailabilityOpen(false); }}
+          >
+            {option}
+          </button>
+        ))}
+      </MotionDiv>
+    </>
+  )}
+</AnimatePresence>
 
-      <AnimatePresence>
-        {isProductTypeOpen && (
-          <MotionDiv
-            className="fixed bottom-0 left-0 w-full bg-white shadow-lg border-t z-50 p-4 max-h-[60vh] overflow-y-auto"
-            variants={sheetVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            transition={{ duration: 0.3 }}
+<AnimatePresence>
+  {isProductTypeOpen && (
+    <>
+      <MotionDiv
+        className="fixed inset-0 bg-black/30 z-40"
+        onClick={() => setIsProductTypeOpen(false)}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.3 }}
+        exit={{ opacity: 0 }}
+      />
+      <MotionDiv
+        className="fixed bottom-0 left-0 w-full bg-white shadow-lg border-t z-50 p-4 max-h-[60vh] overflow-y-auto pointer-events-auto"
+        variants={sheetVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        transition={{ duration: 0.3 }}
+      >
+        <h2 className="font-semibold text-gray-700 mb-3">Jenis Produk</h2>
+        {productTypeOptions.map((option) => (
+          <button
+            key={option}
+            className={`${defaultClass} ${productTypeFilter === option ? activeClass : ""}`}
+            onClick={() => { setProductTypeFilter(option); setIsProductTypeOpen(false); }}
           >
-            <h2 className="font-semibold text-gray-700 mb-3">Jenis Produk</h2>
-            {productTypeOptions.map((option) => (
-              <button
-                key={option}
-                className={`${defaultClass} ${productTypeFilter === option ? activeClass : ""}`}
-                onClick={() => { setProductTypeFilter(option); setIsProductTypeOpen(false); }}
-              >
-                {option}
-              </button>
-            ))}
-          </MotionDiv>
-        )}
-      </AnimatePresence>
+            {option}
+          </button>
+        ))}
+      </MotionDiv>
+    </>
+  )}
+</AnimatePresence>
     </>
   );
 }

@@ -200,17 +200,6 @@ export default function Home() {
                 >
                   <Eye size={16} /> Lihat Detail
                 </button>
-                {isDetailOpen && (
-                  <DetailProduct
-                    isOpen={isDetailOpen}
-                    onClose={() => setIsDetailOpen(false)}
-                    product={selectedProduct}
-                    overlayOpacity="bg-black/15"
-                    addToCart={(p, size, shade) =>
-                      console.log("Tambah ke keranjang:", p, size, shade)
-                    }
-                  />
-                )}
               </div>
             ))}
           </div>
@@ -286,17 +275,6 @@ export default function Home() {
                 >
                   <Eye size={16} /> Lihat Detail
                 </button>
-                {isDetailOpen && (
-                  <DetailProduct
-                    isOpen={isDetailOpen}
-                    onClose={() => setIsDetailOpen(false)}
-                    product={selectedProduct}
-                    overlayOpacity="bg-black/15"
-                    addToCart={(p, size, shade) =>
-                      console.log("Tambah ke keranjang:", p, size, shade)
-                    }
-                  />
-                )}
               </div>
             ))}
           </div>
@@ -381,17 +359,6 @@ export default function Home() {
                   <Eye size={16} />
                   Lihat Detail
                 </button>
-                {isDetailOpen && (
-                  <DetailProduct
-                    isOpen={isDetailOpen}
-                    onClose={() => setIsDetailOpen(false)}
-                    product={selectedProduct}
-                    overlayOpacity="bg-black/15"
-                    addToCart={(p, size, shade) =>
-                      console.log("Tambah ke keranjang:", p, size, shade)
-                    }
-                  />
-                )}
               </div>
             </div>
           ))}
@@ -446,6 +413,14 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {isDetailOpen && (
+        <DetailProduct
+          isOpen={isDetailOpen}
+          onClose={() => setIsDetailOpen(false)}
+          product={selectedProduct}
+          overlayOpacity="bg-black/15"
+        />
+      )}
     </>
   );
 }

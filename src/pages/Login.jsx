@@ -80,7 +80,6 @@ export default function Login() {
         onSubmit={handleSubmit}
         className="max-w-xl w-full mx-auto flex flex-col gap-6"
       >
-        {/* Email */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Email
@@ -94,8 +93,6 @@ export default function Login() {
             required
           />
         </div>
-
-        {/* Password */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Password

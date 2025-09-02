@@ -38,36 +38,37 @@ export default function Footer() {
           <p className="flex items-center gap-2 mb-4">
             <Mail size={16} /> CSskintific@gmail.com
           </p>
-          <h3 className="font-semibold mb-2">SUPPORT</h3>
+          <h3 className="font-semibold mb-2">MENU</h3>
           <ul className="space-y-1">
+                        <li>
+              <a href="#" className="hover:underline">
+               Home
+              </a>
+            </li>
+
             <li>
               <a href="#" className="hover:underline">
-                Track My Order
+                All Product
               </a>
             </li>
             <li>
               <a href="#" className="hover:underline">
-                Shipping & Delivery
+                Best Seller
               </a>
             </li>
             <li>
               <a href="#" className="hover:underline">
-                Returns & Refunds Policy
+                New Launching
               </a>
             </li>
             <li>
               <a href="#" className="hover:underline">
-                FAQs
+                Skincare
               </a>
             </li>
             <li>
               <a href="#" className="hover:underline">
-                Privacy Policy
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline">
-                Terms of Service
+                MakeUp
               </a>
             </li>
           </ul>

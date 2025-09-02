@@ -13,7 +13,7 @@ export default function Alamat() {
   const [popupType, setPopupType] = useState("success");
 
   const [form, setForm] = useState({
-    id: "", // id unik
+    id: "", 
     nama: "",
     email: "",
     nomorTelepon: "",
@@ -37,12 +37,21 @@ export default function Alamat() {
       );
       setUserAlamat(alamatUser);
 
-      if (alamatUser.length > 0) {
-        const firstAlamat = alamatUser[0];
-        setForm({
-          ...firstAlamat
-        });
-      }
+if (alamatUser.length > 0) {
+  const firstAlamat = alamatUser[0];
+  setForm({
+    id: firstAlamat.id || "",
+    nama: firstAlamat.nama || "",
+    email: firstAlamat.email || "",
+    nomorTelepon: firstAlamat.nomorTelepon || "",
+    provinsi: firstAlamat.provinsi || "",
+    kota: firstAlamat.kota || "",
+    kecamatan: firstAlamat.kecamatan || "",
+    kodePos: firstAlamat.kodePos || "",
+    alamatLengkap: firstAlamat.alamatLengkap || "",
+    detail: firstAlamat.detail || "",
+  });
+}
     }
   }, []);
 
@@ -68,62 +77,107 @@ export default function Alamat() {
     });
   };
 
-  const handleEdit = (alamat) => {
-    setForm(alamat);
-    setIsEditing(true);
-  };
+const handleEdit = (alamat) => {
+  setForm({
+    id: alamat.id || "",
+    nama: alamat.nama || "",
+    email: alamat.email || "",
+    nomorTelepon: alamat.nomorTelepon || "",
+    provinsi: alamat.provinsi || "",
+    kota: alamat.kota || "",
+    kecamatan: alamat.kecamatan || "",
+    kodePos: alamat.kodePos || "",
+    alamatLengkap: alamat.alamatLengkap || "",
+    detail: alamat.detail || "",
+  });
+  setIsEditing(true);
+};
 
-  const handleSave = (isAdd = false) => {
-    setErrorMsg("");
+const handleSave = (isAdd = false) => {
+  setErrorMsg("");
 
-    const requiredFields = [
-      "nama",
-      "email",
-      "nomorTelepon",
-      "provinsi",
-      "kota",
-      "kecamatan",
-      "kodePos",
-    ];
+  const requiredFields = [
+    "nama",
+    "email",
+    "nomorTelepon",
+    "provinsi",
+    "kota",
+    "kecamatan",
+    "kodePos",
+  ];
 
-    for (let field of requiredFields) {
-      if (!form[field].trim()) {
-        setErrorMsg(`Field ${field} wajib diisi!`);
-        return;
-      }
-    }
-
-    if (!/^[0-9]{5}$/.test(form.kodePos)) {
-      setErrorMsg("Kode Pos harus 5 digit angka!");
+  for (let field of requiredFields) {
+    if (!form[field]?.trim()) {
+      setErrorMsg(`Field ${field} wajib diisi!`);
       return;
     }
+  }
 
-    const wordCount = form.detail.trim().split(/\s+/).filter(Boolean).length;
-    if (wordCount > 20) {
-      setErrorMsg("Detail lainnya maksimal 20 kata!");
-      return;
-    }
+  if (!/^[0-9]{5}$/.test(form.kodePos)) {
+    setErrorMsg("Kode Pos harus 5 digit angka!");
+    return;
+  }
 
-    const alamatList = JSON.parse(localStorage.getItem("alamat")) || [];
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  const wordCount = form.detail?.trim().split(/\s+/).filter(Boolean).length || 0;
+  if (wordCount > 20) {
+    setErrorMsg("Detail lainnya maksimal 20 kata!");
+    return;
+  }
 
-    if (isAdd) {
-      // generate id unik
-      const newAlamat = { ...form, id: Date.now(), namaUser: currentUser.nama };
-      alamatList.push(newAlamat);
-      setUserAlamat([...userAlamat, newAlamat]);
-    } else {
-      // update alamat
-      const updatedList = alamatList.map((item) =>
-        item.id === form.id ? { ...item, ...form } : item
-      );
-      setUserAlamat(updatedList.filter((item) => item.namaUser === currentUser.nama));
-    }
+  const alamatList = JSON.parse(localStorage.getItem("alamat")) || [];
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
+  if (isAdd) {
+    // generate id unik dan tambah namaUser
+    const newAlamat = { ...form, id: Date.now(), namaUser: currentUser.nama };
+    alamatList.push(newAlamat);
     localStorage.setItem("alamat", JSON.stringify(alamatList));
-    setIsEditing(false);
-    setIsAdding(false);
-  };
+    setUserAlamat([...userAlamat, newAlamat]);
+  } else {
+    // update alamat sesuai id
+    let updatedList = [...alamatList];
+
+    if (!form.id) {
+      // alamat lama belum punya id  cari berdasarkan namaUser+email
+      const index = updatedList.findIndex(
+        (item) => item.namaUser === currentUser.nama && item.email === form.email
+      );
+
+      if (index !== -1) {
+        updatedList[index] = {
+          ...updatedList[index],
+          ...form,
+          id: Date.now(),
+          namaUser: currentUser.nama,
+        };
+      } else {
+        // jika tidak ketemu, tambahkan sebagai baru
+        const newAlamat = { ...form, id: Date.now(), namaUser: currentUser.nama };
+        updatedList.push(newAlamat);
+      }
+    } else {
+      // alamat sudah punya id → update
+      updatedList = updatedList.map((item) =>
+        item.id === form.id
+          ? { ...item, ...form, id: item.id, namaUser: currentUser.nama }
+          : item
+      );
+    }
+
+    localStorage.setItem("alamat", JSON.stringify(updatedList));
+    setUserAlamat(
+      updatedList.filter((item) => item.namaUser === currentUser.nama)
+    );
+  }
+
+  setIsEditing(false);
+  setIsAdding(false);
+
+  // popup sukses
+  setPopupMessage("Data berhasil disimpan!");
+  setPopupType("success");
+  setShowPopup(true);
+};
 
   const handleDelete = (id) => {
     const alamatList = JSON.parse(localStorage.getItem("alamat")) || [];
@@ -152,9 +206,9 @@ export default function Alamat() {
         <HeaderUser />
         <div className="flex items-center justify-center bg-white-50 md:pt-30 pl-6 pr-6 pt-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full">
-            {userAlamat.map((alamat) => (
+            {userAlamat.map((alamat, index) => (
               <div
-                key={alamat.id}
+                key={alamat.id || index}
                 className="bg-white shadow-md rounded-2xl p-6 flex flex-col justify-between"
               >
                 <div>
@@ -190,7 +244,7 @@ export default function Alamat() {
 {userAlamat.length < 4 && (
   <div
     className="bg-white shadow-md rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition"
-    style={{ minHeight: "250px" }} // tinggi fix, bisa disesuaikan
+    style={{ minHeight: "250px" }} 
     onClick={() => {
       setForm({
         id: "",

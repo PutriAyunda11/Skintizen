@@ -21,6 +21,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Alamat from './pages/Alamat.jsx';
 import Riwayat from './pages/Riwayat.jsx';
 import BeliProduct from './pages/BeliProduct.jsx';
+import About from './pages/About.jsx';
 
 const router = createBrowserRouter([
   {
@@ -35,10 +36,10 @@ const router = createBrowserRouter([
       { path: "/skin-care", element: <Skincare /> },
       { path: "/makeup", element: <MakeUp /> },
       { path: "/search", element: <Search /> },
+      { path: "/about", element: <About /> },
       { path: "/all-product", element: <AllProduct /> },
       { path: "/product/:id", element: <Product /> },
 
-      //bungkus route yang butuh login
       {
         element: <ProtectedRoute />,
         children: [
