@@ -44,7 +44,6 @@ export default function Pesanan() {
   const completePesanan = (id) => {
     const pesananDipilih = pesanan[id];
     if (!pesananDipilih) return;
-
     const riwayat = JSON.parse(localStorage.getItem("riwayat")) || [];
 
     const newRiwayatItem = {

@@ -40,9 +40,8 @@ export default function BeliProduct() {
     };
 
     loadAlamat();
- // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
 
   if (!orderData || orderData.length === 0) {
     return (
@@ -128,7 +127,7 @@ export default function BeliProduct() {
     savePesanan(data);
   };
 
-  const updateStokProduk = () => {
+  const updateProduk = () => {
     const semuaProduk = JSON.parse(localStorage.getItem("skintiz")) || [];
 
     orderData.forEach((order) => {
@@ -138,6 +137,9 @@ export default function BeliProduct() {
         if (semuaProduk[indexProduk].stok < 0) {
           semuaProduk[indexProduk].stok = 0;
         }
+        // Tambahkan jumlah terjual
+        semuaProduk[indexProduk].jumlah_terjual =
+          (semuaProduk[indexProduk].jumlah_terjual || 0) + order.kuantitas;
       }
     });
 
@@ -192,7 +194,7 @@ export default function BeliProduct() {
     riwayat.push(dataPesanan);
     localStorage.setItem("pesanan", JSON.stringify(riwayat));
 
-    updateStokProduk();
+    updateProduk();
 
     let keranjang = JSON.parse(localStorage.getItem("keranjang")) || [];
 
@@ -220,16 +222,16 @@ export default function BeliProduct() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 md:bg-gray-50 bg-white">
+    <div className="w-full min-h-screen bg-gray-50 md:bg-gray-50 bg-white">
       <div
-        className="w-full bg-white py-8 text-center font-bold text-2xl cursor-pointer"
+        className="bg-white py-4 text-center font-bold text-2xl cursor-pointer"
         onClick={() => navigate("/")}
       >
         SKINTIZEN
       </div>
 
       {/* Konten utama */}
-      <div className="flex flex-col-reverse md:flex-row w-full min-h-[calc(100vh-64px)]">
+      <div className="flex flex-col-reverse w-full md:flex-row  min-h-[calc(100vh-64px)]">
         {/* Kiri (alamat + metode bayar) */}
         <div className="w-full md:w-1/2 p-6 md:p-10 md:pl-20 flex flex-col gap-6 bg-white md:bg-gray-50">
           <div className="flex flex-col gap-2">
@@ -291,7 +293,7 @@ export default function BeliProduct() {
         </div>
 
         {/* Kanan: Ringkasan */}
-        <div className="w-full md:w-1/2 p-6 md:p-10 md:pr-20 flex flex-col gap-6 bg-white md:bg-gray-200">
+        <div className="w-full md:w-1/2 p-6 md:p-10 md:pr-20 flex flex-col gap-6 bg-white md:bg-gray-200 md:overflow-y-auto md:max-h-screen">
           {orderData.map((order, idx) => (
             <div key={idx} className="flex gap-6 border-b pb-4">
               <div className="relative">

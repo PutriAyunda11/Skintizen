@@ -3,8 +3,9 @@ import {
   Instagram,
   Youtube,
   ShoppingCart,
-  CreditCard,
+  Copyright,
 } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -40,44 +41,47 @@ export default function Footer() {
           </p>
           <h3 className="font-semibold mb-2">MENU</h3>
           <ul className="space-y-1">
-                        <li>
-              <a href="#" className="hover:underline">
-               Home
-              </a>
-            </li>
-
             <li>
-              <a href="#" className="hover:underline">
+              <NavLink to="/" className="hover:underline">
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/all-product" className="hover:underline">
                 All Product
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="#" className="hover:underline">
+              <NavLink to="/best-sellers" className="hover:underline">
                 Best Seller
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="#" className="hover:underline">
+              <NavLink to="/new-launch" className="hover:underline">
                 New Launching
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="#" className="hover:underline">
+              <NavLink to="/skin-care" className="hover:underline">
                 Skincare
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="#" className="hover:underline">
+              <NavLink to="/makeup" className="hover:underline">
                 MakeUp
-              </a>
+              </NavLink>
             </li>
           </ul>
         </div>
         <div>
           <h3 className="font-semibold mb-2">ABOUT US</h3>
-          <a href="#" className="hover:underline">
-            Skintific©
-          </a>
+          <NavLink
+            to="/about"
+            className="hover:underline flex items-center gap-1"
+          >
+            Skintific
+            <Copyright size={16} />
+          </NavLink>
         </div>
       </div>
     </footer>

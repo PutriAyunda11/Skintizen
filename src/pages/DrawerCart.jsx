@@ -73,9 +73,9 @@ export default function DrawerCart({
                       <li
                         key={index}
                         onClick={() => toggleSelect(index)}
-                        className={`relative flex items-center gap-3 border rounded p-2 cursor-pointer ${
+                        className={`relative flex items-center gap-3 border border-gray-300 rounded p-2 cursor-pointer ${
                           isSelected
-                            ? "border-pink-500 ring-2 ring-pink-300"
+                            ? "border-blue-500 ring-2 ring-blue-300"
                             : ""
                         }`}
                       >
@@ -83,7 +83,7 @@ export default function DrawerCart({
                         {isSelected && (
                           <CheckCircle2
                             size={20}
-                            className="absolute top-2 left-2 text-pink-600"
+                            className="absolute top-2 left-2 text-blue-600"
                           />
                         )}
 
@@ -91,7 +91,7 @@ export default function DrawerCart({
                         <img
                           src={item.foto || "/placeholder.png"}
                           alt={item.nama}
-                          className="w-26 h-26 object-cover rounded-md border"
+                          className="w-26 h-26 object-cover rounded-md border border-gray-400"
                         />
 
                         {/* Info produk */}
@@ -166,7 +166,7 @@ export default function DrawerCart({
                       state: { orderData: selectedProducts },
                     });
                   }}
-                  className="bg-pink-600 hover:bg-pink-700 text-white font-bold px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition"
                 >
                   Beli Sekarang
                 </button>

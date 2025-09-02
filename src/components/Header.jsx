@@ -7,7 +7,8 @@ import DrawerCart from "../pages/DrawerCart";
 
 const MotionDiv = motion.div;
 
-export default function Header({ isSearchOpen, setIsSearchOpen }) {
+export default function Header({ isSearchOpen, setIsSearchOpen, isCartOpen,
+  setIsCartOpen,}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
@@ -39,7 +40,6 @@ export default function Header({ isSearchOpen, setIsSearchOpen }) {
     location.pathname === "/all-product";
   const category = location.pathname.slice(1);
 
-  const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [cartItems, setCartItems] = useState([]);
 
   const handleCartClick = () => {
@@ -58,7 +58,7 @@ export default function Header({ isSearchOpen, setIsSearchOpen }) {
           item.emailUser === currentUser.email
       );
       setCartItems(filteredCart);
-      setShowCartDrawer(true);
+      setIsCartOpen(true);
     }
   };
 
@@ -155,7 +155,6 @@ export default function Header({ isSearchOpen, setIsSearchOpen }) {
               <button onClick={() => setIsSearchOpen(true)}>
                 <Search size={22} className="cursor-pointer" />
               </button>
-              {/* Cart */}
               {/* Desktop */}
               <button
                 onClick={handleCartClick}
@@ -338,13 +337,12 @@ export default function Header({ isSearchOpen, setIsSearchOpen }) {
         )}
         {/* Cart Drawer */}
         <DrawerCart
-          showCartDrawer={showCartDrawer}
-          setShowCartDrawer={setShowCartDrawer}
+          showCartDrawer={isCartOpen}
+          setShowCartDrawer={setIsCartOpen}
           cartItems={cartItems}
           setCartItems={setCartItems}
           handleDecrement={handleDecrement}
           handleIncrement={handleIncrement}
-          isOpen={isSearchOpen}
         />{" "}
       </header>
     </>
